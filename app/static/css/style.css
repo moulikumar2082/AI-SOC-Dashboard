@@ -1,45 +1,55 @@
 /* ==========================================================================
-   AI-POWERED SOC DASHBOARD - ULTRA HIGH-CONTRAST LIGHT THEME
+   AI-POWERED SOC DASHBOARD - ULTRA-VISIBLE CYBERPUNK NEON THEME
    ========================================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800;900&family=Rajdhani:wght@600;700;800&family=JetBrains+Mono:wght@500;700;800&display=swap');
 
 :root {
-    --bg-light: #f8fafc;
-    --bg-card: #ffffff;
-    --border-color: #cbd5e1;
+    --bg-dark: #040814;
+    --bg-card: #0a1224;
+    --border-cyber: #00f2fe;
     
-    --text-dark: #000000;
-    --text-body: #0f172a;
-    --text-subtle: #334155;
+    --text-white: #ffffff;
+    --text-neon-cyan: #00f2fe;
+    --text-neon-green: #05ffa1;
+    --text-neon-magenta: #ff007f;
+    --text-neon-yellow: #ffee00;
 
     --sidebar-width: 260px;
 }
 
 body {
-    background-color: var(--bg-light) !important;
-    color: var(--text-dark) !important;
-    font-family: 'Inter', sans-serif !important;
-    font-size: 0.95rem;
-    font-weight: 500;
+    background-color: var(--bg-dark) !important;
+    background-image: 
+        linear-gradient(rgba(0, 242, 254, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 242, 254, 0.05) 1px, transparent 1px) !important;
+    background-size: 30px 30px !important;
+    color: #ffffff !important;
+    font-family: 'Rajdhani', sans-serif !important;
+    font-size: 1.05rem;
+    font-weight: 700;
     overflow-x: hidden;
     min-height: 100vh;
 }
 
-/* Ultra High Contrast Typography */
-h1, h2, h3, h4, h5, h6, .fw-bold, .card-header span {
-    font-family: 'Inter', sans-serif !important;
-    font-weight: 800 !important;
-    color: #000000 !important;
+/* Ultra Bright Neon Typography */
+h1, h2, h3, h4, h5, h6, .font-cyber {
+    font-family: 'Orbitron', sans-serif !important;
+    font-weight: 900 !important;
+    color: #00f2fe !important;
+    letter-spacing: 0.06em;
+    text-shadow: 0 0 10px rgba(0, 242, 254, 0.7) !important;
 }
 
-p, span, label, td, div {
-    color: #0f172a;
+p, span, label, div {
+    color: #ffffff;
+    font-weight: 600;
 }
 
 .text-muted, .kpi-label {
-    color: #334155 !important;
+    color: #00f2fe !important;
     font-weight: 700 !important;
+    text-shadow: 0 0 5px rgba(0, 242, 254, 0.4);
 }
 
 code, pre, .font-mono, .kpi-val, .table-cyber td {
@@ -55,13 +65,13 @@ code, pre, .font-mono, .kpi-val, .table-cyber td {
     min-height: 100vh;
 }
 
-/* Ultra Crisp Contrast Dark Sidebar */
+/* High Contrast Cyber Sidebar */
 #sidebar {
     min-width: var(--sidebar-width);
     max-width: var(--sidebar-width);
-    background: #0f172a !important;
-    border-right: 2px solid #1e293b;
-    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
+    background: #040916 !important;
+    border-right: 2px solid #00f2fe !important;
+    box-shadow: 5px 0 25px rgba(0, 242, 254, 0.2);
     transition: all 0.3s ease;
     display: flex;
     flex-direction: column;
@@ -70,20 +80,21 @@ code, pre, .font-mono, .kpi-val, .table-cyber td {
 
 #sidebar .sidebar-brand {
     padding: 1.5rem 1.25rem;
-    font-size: 1.3rem;
+    font-size: 1.35rem;
     font-weight: 900;
     color: #ffffff !important;
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    border-bottom: 2px solid #1e293b;
-    background: #1e293b;
+    border-bottom: 2px solid #00f2fe;
+    background: #081226;
 }
 
 #sidebar .sidebar-brand span {
-    color: #38bdf8 !important;
-    -webkit-text-fill-color: #38bdf8 !important;
+    color: #00f2fe !important;
+    -webkit-text-fill-color: #00f2fe !important;
     font-weight: 900 !important;
+    text-shadow: 0 0 12px rgba(0, 242, 254, 0.8) !important;
 }
 
 .sidebar-nav {
@@ -95,44 +106,48 @@ code, pre, .font-mono, .kpi-val, .table-cyber td {
 .sidebar-nav .nav-header {
     padding: 0.85rem 1.25rem 0.35rem;
     font-size: 0.75rem;
+    font-family: 'Orbitron', sans-serif !important;
     font-weight: 800;
     text-transform: uppercase;
-    color: #94a3b8 !important;
-    letter-spacing: 0.08em;
+    color: #ff007f !important;
+    letter-spacing: 0.12em;
+    text-shadow: 0 0 8px rgba(255, 0, 127, 0.6) !important;
 }
 
 .sidebar-nav li a {
-    padding: 0.8rem 1.25rem;
+    padding: 0.85rem 1.25rem;
     display: flex;
     align-items: center;
     gap: 0.9rem;
-    color: #f1f5f9 !important;
+    color: #ffffff !important;
     text-decoration: none;
-    font-size: 0.95rem;
+    font-size: 1rem;
     font-weight: 700;
     transition: all 0.2s ease;
     border-left: 4px solid transparent;
 }
 
 .sidebar-nav li a:hover {
-    color: #ffffff !important;
-    background: #1e293b !important;
-    border-left-color: #38bdf8;
+    color: #00f2fe !important;
+    background: rgba(0, 242, 254, 0.15) !important;
+    border-left-color: #00f2fe;
+    text-shadow: 0 0 8px rgba(0, 242, 254, 0.8);
 }
 
 .sidebar-nav li.active a {
-    color: #ffffff !important;
-    background: #0284c7 !important;
-    border-left-color: #38bdf8;
-    font-weight: 800;
+    color: #040814 !important;
+    background: #00f2fe !important;
+    border-left-color: #ffffff;
+    font-weight: 900;
+    box-shadow: 0 0 20px rgba(0, 242, 254, 0.6);
 }
 
-/* Light Top Navbar */
+/* High-Visibility Top Navbar */
 .top-navbar {
-    background: #ffffff !important;
-    border-bottom: 2px solid #cbd5e1 !important;
+    background: #060e20 !important;
+    border-bottom: 2px solid #00f2fe !important;
     padding: 0.85rem 1.75rem;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 20px rgba(0, 242, 254, 0.15);
 }
 
 /* Main Content Area */
@@ -148,29 +163,30 @@ code, pre, .font-mono, .kpi-val, .table-cyber td {
     flex: 1;
 }
 
-/* High Contrast White Cards */
+/* Cyber Neon Cards */
 .soc-card {
-    background: #ffffff !important;
-    border: 2px solid #cbd5e1 !important;
-    border-radius: 12px;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
-    transition: all 0.2s ease;
+    background: var(--bg-card) !important;
+    border: 2px solid #00f2fe !important;
+    border-radius: 10px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.8), 0 0 15px rgba(0, 242, 254, 0.15) !important;
+    transition: all 0.25s ease;
     position: relative;
     overflow: hidden;
 }
 
 .soc-card:hover {
-    border-color: #94a3b8 !important;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    border-color: #05ffa1 !important;
+    box-shadow: 0 10px 35px rgba(0, 242, 254, 0.3), 0 0 20px rgba(5, 255, 161, 0.3) !important;
 }
 
 .soc-card .card-header {
-    background: #e2e8f0 !important;
-    border-bottom: 2px solid #cbd5e1 !important;
+    background: #050b18 !important;
+    border-bottom: 2px solid #00f2fe !important;
     padding: 1rem 1.25rem;
+    font-family: 'Orbitron', sans-serif !important;
     font-weight: 800 !important;
     font-size: 0.95rem;
-    color: #000000 !important;
+    color: #00f2fe !important;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -192,7 +208,7 @@ code, pre, .font-mono, .kpi-val, .table-cyber td {
 .kpi-card .kpi-icon {
     width: 56px;
     height: 56px;
-    border-radius: 12px;
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -200,68 +216,74 @@ code, pre, .font-mono, .kpi-val, .table-cyber td {
     font-weight: 800;
 }
 
-.kpi-icon.kpi-total { background: #dbeafe; color: #1e40af; border: 2px solid #93c5fd; }
-.kpi-icon.kpi-critical { background: #fee2e2; color: #991b1b; border: 2px solid #fca5a5; }
-.kpi-icon.kpi-high { background: #ffedd5; color: #c2410c; border: 2px solid #fdba74; }
-.kpi-icon.kpi-medium { background: #f3e8ff; color: #6b21a8; border: 2px solid #d8b4fe; }
-.kpi-icon.kpi-low { background: #dcfce7; color: #166534; border: 2px solid #86efac; }
-.kpi-icon.kpi-incident { background: #e0f2fe; color: #075985; border: 2px solid #7dd3fc; }
+.kpi-icon.kpi-total { background: rgba(0, 242, 254, 0.2); color: #00f2fe; border: 2px solid #00f2fe; box-shadow: 0 0 15px rgba(0, 242, 254, 0.4); }
+.kpi-icon.kpi-critical { background: rgba(255, 0, 127, 0.2); color: #ff007f; border: 2px solid #ff007f; box-shadow: 0 0 15px rgba(255, 0, 127, 0.5); }
+.kpi-icon.kpi-high { background: rgba(255, 159, 67, 0.2); color: #ff9f43; border: 2px solid #ff9f43; box-shadow: 0 0 15px rgba(255, 159, 67, 0.4); }
+.kpi-icon.kpi-medium { background: rgba(157, 78, 221, 0.2); color: #c77dff; border: 2px solid #c77dff; box-shadow: 0 0 15px rgba(157, 78, 221, 0.4); }
+.kpi-icon.kpi-low { background: rgba(5, 255, 161, 0.2); color: #05ffa1; border: 2px solid #05ffa1; box-shadow: 0 0 15px rgba(5, 255, 161, 0.4); }
+.kpi-icon.kpi-incident { background: rgba(255, 238, 0, 0.2); color: #ffee00; border: 2px solid #ffee00; box-shadow: 0 0 15px rgba(255, 238, 0, 0.4); }
 
 .kpi-val {
-    font-size: 2rem;
+    font-size: 2.1rem;
     font-weight: 900 !important;
     line-height: 1.1;
-    color: #000000 !important;
+    color: #ffffff !important;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.8) !important;
 }
 
 .kpi-label {
     font-size: 0.75rem;
-    color: #1e293b !important;
+    font-family: 'Orbitron', sans-serif !important;
+    color: #00f2fe !important;
     font-weight: 800 !important;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.08em;
 }
 
-/* High Contrast Badges */
+/* High Contrast Neon Badges */
 .badge-cyber {
     padding: 0.45em 0.85em;
     font-size: 0.75rem;
+    font-family: 'Orbitron', sans-serif !important;
     font-weight: 800 !important;
-    border-radius: 6px;
-    letter-spacing: 0.03em;
+    border-radius: 4px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
 }
 
-.badge-critical { background: #fee2e2 !important; color: #991b1b !important; border: 1px solid #b91c1c !important; }
-.badge-high { background: #ffedd5 !important; color: #9a3412 !important; border: 1px solid #c2410c !important; }
-.badge-medium { background: #f3e8ff !important; color: #6b21a8 !important; border: 1px solid #7e22ce !important; }
-.badge-low { background: #dbeafe !important; color: #1e40af !important; border: 1px solid #1d4ed8 !important; }
-.badge-info { background: #e2e8f0 !important; color: #0f172a !important; border: 1px solid #64748b !important; }
+.badge-critical { background: #ff007f !important; color: #ffffff !important; border: 1px solid #ffffff !important; box-shadow: 0 0 12px rgba(255, 0, 127, 0.8) !important; }
+.badge-high { background: #ff9f43 !important; color: #040814 !important; border: 1px solid #ffffff !important; box-shadow: 0 0 12px rgba(255, 159, 67, 0.8) !important; }
+.badge-medium { background: #9d4edd !important; color: #ffffff !important; border: 1px solid #ffffff !important; box-shadow: 0 0 12px rgba(157, 78, 221, 0.8) !important; }
+.badge-low { background: #00f2fe !important; color: #040814 !important; border: 1px solid #ffffff !important; box-shadow: 0 0 12px rgba(0, 242, 254, 0.8) !important; }
+.badge-info { background: #08182c !important; color: #00f2fe !important; border: 1px solid #00f2fe !important; }
 
-/* High Contrast Data Tables */
+/* High Visibility Cyber Data Tables */
 .table-cyber {
     width: 100%;
-    color: #000000 !important;
+    color: #ffffff !important;
     border-collapse: separate;
     border-spacing: 0;
 }
 
 .table-cyber th {
-    background: #e2e8f0 !important;
-    color: #000000 !important;
+    background: #040a18 !important;
+    color: #00f2fe !important;
+    font-family: 'Orbitron', sans-serif !important;
     font-size: 0.8rem;
-    font-weight: 800 !important;
+    font-weight: 900 !important;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.08em;
     padding: 1rem;
-    border-bottom: 2px solid #cbd5e1 !important;
+    border-bottom: 2px solid #00f2fe !important;
+    text-shadow: 0 0 8px rgba(0, 242, 254, 0.5) !important;
 }
 
 .table-cyber td {
     padding: 0.95rem 1rem;
-    font-size: 0.9rem;
-    font-weight: 600 !important;
-    color: #0f172a !important;
-    border-bottom: 1px solid #e2e8f0 !important;
+    font-size: 0.95rem;
+    font-weight: 700 !important;
+    color: #ffffff !important;
+    border-bottom: 1px solid rgba(0, 242, 254, 0.2) !important;
     vertical-align: middle;
 }
 
@@ -270,90 +292,100 @@ code, pre, .font-mono, .kpi-val, .table-cyber td {
 }
 
 .table-cyber tbody tr:hover {
-    background: #f1f5f9 !important;
+    background: rgba(0, 242, 254, 0.12) !important;
 }
 
-/* High Contrast Buttons */
+/* Neon Glowing Buttons */
 .btn-cyber-primary {
-    background: #1d4ed8 !important;
-    color: #ffffff !important;
-    font-weight: 700 !important;
+    background: #00f2fe !important;
+    color: #040814 !important;
+    font-family: 'Orbitron', sans-serif !important;
+    font-weight: 900 !important;
     font-size: 0.85rem;
     border: none;
-    border-radius: 8px;
-    padding: 0.5rem 1rem;
-    box-shadow: 0 4px 12px rgba(29, 78, 216, 0.3);
+    border-radius: 6px;
+    padding: 0.55rem 1.1rem;
+    box-shadow: 0 0 15px rgba(0, 242, 254, 0.6) !important;
     transition: all 0.2s ease;
 }
 
 .btn-cyber-primary:hover {
-    background: #1e40af !important;
-    color: #ffffff !important;
-    box-shadow: 0 6px 16px rgba(29, 78, 216, 0.5);
+    background: #05ffa1 !important;
+    color: #040814 !important;
+    box-shadow: 0 0 25px rgba(5, 255, 161, 0.9) !important;
+    transform: scale(1.03);
 }
 
 .btn-cyber-outline {
-    border: 2px solid #1d4ed8 !important;
-    color: #1d4ed8 !important;
-    font-weight: 700 !important;
+    border: 2px solid #00f2fe !important;
+    color: #00f2fe !important;
+    font-family: 'Orbitron', sans-serif !important;
+    font-weight: 800 !important;
     font-size: 0.8rem;
-    background: #ffffff !important;
-    border-radius: 8px;
+    background: transparent !important;
+    border-radius: 6px;
+    box-shadow: 0 0 10px rgba(0, 242, 254, 0.3) !important;
     transition: all 0.2s ease;
 }
 
 .btn-cyber-outline:hover {
-    background: #dbeafe !important;
-    color: #1e40af !important;
+    background: #00f2fe !important;
+    color: #040814 !important;
+    box-shadow: 0 0 20px rgba(0, 242, 254, 0.8) !important;
 }
 
-/* AI Intelligence Box Light High Contrast */
+/* AI Intelligence Box Cyber */
 .ai-box {
-    background: #eff6ff !important;
-    border: 2px solid #93c5fd !important;
-    border-left: 6px solid #1d4ed8 !important;
+    background: #081226 !important;
+    border: 2px solid #00f2fe !important;
+    border-left: 6px solid #00f2fe !important;
     border-radius: 10px;
-    padding: 1.35rem;
+    padding: 1.4rem;
     position: relative;
-    box-shadow: 0 4px 15px rgba(29, 78, 216, 0.1);
+    box-shadow: 0 0 25px rgba(0, 242, 254, 0.2) !important;
 }
 
 .ai-box .ai-header {
     display: flex;
     align-items: center;
     gap: 0.6rem;
-    color: #1e40af !important;
-    font-weight: 800 !important;
+    color: #00f2fe !important;
+    font-family: 'Orbitron', sans-serif !important;
+    font-weight: 900 !important;
     margin-bottom: 0.75rem;
+    text-shadow: 0 0 10px rgba(0, 242, 254, 0.6) !important;
 }
 
-/* Risk Score Meter Light */
+/* Risk Score Meter Cyber */
 .risk-meter {
     height: 10px;
     border-radius: 5px;
-    background: #cbd5e1;
+    background: #091224;
+    border: 1px solid #00f2fe;
     overflow: hidden;
 }
 
 .risk-fill {
     height: 100%;
     transition: width 0.5s ease;
+    box-shadow: 0 0 10px currentColor;
 }
 
-/* Form inputs styling */
+/* Form inputs cyber styling */
 .form-control, .form-select {
-    background-color: #ffffff !important;
-    border: 2px solid #cbd5e1 !important;
-    color: #000000 !important;
-    font-weight: 600 !important;
-    border-radius: 8px;
+    background-color: #060e20 !important;
+    border: 2px solid #00f2fe !important;
+    color: #ffffff !important;
+    font-family: 'JetBrains Mono', monospace !alignment;
+    font-weight: 700 !important;
+    border-radius: 6px;
 }
 
 .form-control:focus, .form-select:focus {
-    background-color: #ffffff !important;
-    border-color: #1d4ed8 !important;
-    color: #000000 !important;
-    box-shadow: 0 0 0 0.2rem rgba(29, 78, 216, 0.25) !important;
+    background-color: #08142c !important;
+    border-color: #05ffa1 !important;
+    color: #ffffff !important;
+    box-shadow: 0 0 15px rgba(5, 255, 161, 0.4) !important;
 }
 
 /* Responsive adjustments */
