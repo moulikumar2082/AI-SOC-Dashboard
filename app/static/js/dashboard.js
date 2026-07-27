@@ -1,4 +1,4 @@
-/* AI SOC Dashboard JavaScript & Light Visualizers */
+/* AI SOC Dashboard JavaScript & High-Contrast Visualizers */
 
 document.addEventListener('DOMContentLoaded', function () {
     // Sidebar Toggle
@@ -24,9 +24,10 @@ function initCharts() {
         return; // Not on dashboard page
     }
 
-    // Light Theme Chart Defaults
-    Chart.defaults.color = '#475569';
+    // High Contrast Chart Defaults
+    Chart.defaults.color = '#000000';
     Chart.defaults.font.family = "'Inter', sans-serif";
+    Chart.defaults.font.weight = '700';
 
     fetch('/api/chart-data')
         .then(response => response.json())
@@ -40,11 +41,11 @@ function initCharts() {
                         datasets: [{
                             data: data.severity.data,
                             backgroundColor: [
-                                '#dc2626', // Critical - Red
-                                '#ea580c', // High - Orange
-                                '#9333ea', // Medium - Purple
-                                '#2563eb', // Low - Blue
-                                '#64748b'  // Info - Slate
+                                '#b91c1c', // Critical - Dark Red
+                                '#c2410c', // High - Dark Orange
+                                '#7e22ce', // Medium - Dark Purple
+                                '#1d4ed8', // Low - Dark Blue
+                                '#475569'  # Info - Slate
                             ],
                             borderWidth: 2,
                             borderColor: '#ffffff'
@@ -59,11 +60,12 @@ function initCharts() {
                                 labels: {
                                     boxWidth: 12,
                                     padding: 12,
-                                    font: { size: 11, weight: '500' }
+                                    color: '#000000',
+                                    font: { size: 11, weight: '700' }
                                 }
                             }
                         },
-                        cutout: '70%'
+                        cutout: '68%'
                     }
                 });
             }
@@ -77,8 +79,8 @@ function initCharts() {
                         datasets: [{
                             label: 'Vector Count',
                             data: data.attack_types.data,
-                            backgroundColor: 'rgba(37, 99, 235, 0.75)',
-                            borderColor: '#2563eb',
+                            backgroundColor: '#1d4ed8',
+                            borderColor: '#1e40af',
                             borderWidth: 1,
                             borderRadius: 6
                         }]
@@ -88,8 +90,8 @@ function initCharts() {
                         maintainAspectRatio: false,
                         plugins: { legend: { display: false } },
                         scales: {
-                            x: { grid: { display: false } },
-                            y: { grid: { color: '#e2e8f0' }, beginAtZero: true }
+                            x: { grid: { display: false }, ticks: { color: '#000000', font: { weight: '700' } } },
+                            y: { grid: { color: '#cbd5e1' }, ticks: { color: '#000000', font: { weight: '700' } }, beginAtZero: true }
                         }
                     }
                 });
@@ -104,14 +106,14 @@ function initCharts() {
                         datasets: [{
                             label: 'Alert Telemetry',
                             data: data.daily_alerts.data,
-                            borderColor: '#16a34a',
-                            backgroundColor: 'rgba(22, 163, 74, 0.12)',
+                            borderColor: '#15803d',
+                            backgroundColor: 'rgba(21, 128, 61, 0.18)',
                             fill: true,
                             tension: 0.35,
-                            pointBackgroundColor: '#16a34a',
+                            pointBackgroundColor: '#15803d',
                             pointBorderColor: '#ffffff',
-                            pointRadius: 5,
-                            pointHoverRadius: 7
+                            pointRadius: 6,
+                            pointHoverRadius: 8
                         }]
                     },
                     options: {
@@ -119,8 +121,8 @@ function initCharts() {
                         maintainAspectRatio: false,
                         plugins: { legend: { display: false } },
                         scales: {
-                            x: { grid: { color: '#e2e8f0' } },
-                            y: { grid: { color: '#e2e8f0' }, beginAtZero: true }
+                            x: { grid: { color: '#cbd5e1' }, ticks: { color: '#000000', font: { weight: '700' } } },
+                            y: { grid: { color: '#cbd5e1' }, ticks: { color: '#000000', font: { weight: '700' } }, beginAtZero: true }
                         }
                     }
                 });
@@ -135,8 +137,8 @@ function initCharts() {
                         datasets: [{
                             label: 'Log Count',
                             data: data.top_ips.data,
-                            backgroundColor: 'rgba(220, 38, 38, 0.75)',
-                            borderColor: '#dc2626',
+                            backgroundColor: '#b91c1c',
+                            borderColor: '#991b1b',
                             borderWidth: 1,
                             borderRadius: 6
                         }]
@@ -147,8 +149,8 @@ function initCharts() {
                         maintainAspectRatio: false,
                         plugins: { legend: { display: false } },
                         scales: {
-                            x: { grid: { color: '#e2e8f0' }, beginAtZero: true },
-                            y: { grid: { display: false } }
+                            x: { grid: { color: '#cbd5e1' }, ticks: { color: '#000000', font: { weight: '700' } }, beginAtZero: true },
+                            y: { grid: { display: false }, ticks: { color: '#000000', font: { weight: '700', family: 'JetBrains Mono' } } }
                         }
                     }
                 });
@@ -168,7 +170,7 @@ function triggerAIAnalysis(logId) {
                 <span class="visually-hidden">Analyzing...</span>
             </div>
             <h5 class="text-dark fw-bold">AI THREAT ENGINE ANALYZING...</h5>
-            <p class="text-secondary small">Interrogating security rules & MITRE ATT&CK database...</p>
+            <p class="text-secondary small font-weight-bold">Interrogating security rules & MITRE ATT&CK database...</p>
         </div>
     `;
 
@@ -202,25 +204,25 @@ function triggerAIAnalysis(logId) {
                         <span class="fs-5">AI THREAT INTELLIGENCE SUMMARY</span>
                         <span class="badge bg-danger ms-auto">${ai.threat_level || 'High'}</span>
                     </div>
-                    <p class="fs-6 mb-2 text-dark"><strong>${ai.threat_summary}</strong></p>
-                    <p class="text-secondary small mb-1"><strong>Attack Vector:</strong> ${ai.attack_type}</p>
-                    <p class="text-secondary small mb-0"><strong>MITRE ATT&CK Mapping:</strong> <span class="badge bg-light text-primary border border-primary font-mono">${ai.mitre_attack}</span></p>
+                    <p class="fs-6 mb-2 text-dark font-weight-bold"><strong>${ai.threat_summary}</strong></p>
+                    <p class="text-dark small mb-1 font-weight-bold"><strong>Attack Vector:</strong> ${ai.attack_type}</p>
+                    <p class="text-dark small mb-0 font-weight-bold"><strong>MITRE ATT&CK Mapping:</strong> <span class="badge bg-dark text-white font-mono">${ai.mitre_attack}</span></p>
                 </div>
 
-                <div class="card bg-light border-secondary mb-3">
-                    <div class="card-header bg-white text-primary font-weight-bold small">
+                <div class="card bg-white border-secondary mb-3">
+                    <div class="card-header bg-light text-dark font-weight-bold small">
                         <i class="fas fa-info-circle me-1"></i> Technical Threat Analysis
                     </div>
-                    <div class="card-body small text-dark font-mono">
+                    <div class="card-body small text-dark font-mono font-weight-bold">
                         ${ai.explanation}
                     </div>
                 </div>
 
-                <div class="card bg-light border-success">
-                    <div class="card-header bg-white text-success font-weight-bold small">
+                <div class="card bg-white border-success">
+                    <div class="card-header bg-light text-success font-weight-bold small">
                         <i class="fas fa-shield-halved me-1"></i> Actionable Remediation Steps
                     </div>
-                    <div class="card-body small text-dark font-mono">
+                    <div class="card-body small text-dark font-mono font-weight-bold">
                         ${actionsHtml}
                     </div>
                 </div>
