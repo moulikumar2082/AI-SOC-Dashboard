@@ -70,6 +70,10 @@ def register():
         db.session.add(new_user)
         db.session.commit()
 
+        # Save new user to persistent ledger
+        from app.utils.user_ledger import save_user_to_ledger
+        save_user_to_ledger(new_user)
+
         from flask import session
         login_user(new_user, remember=True)
         session.permanent = True

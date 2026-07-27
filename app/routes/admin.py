@@ -42,6 +42,9 @@ def create_user():
     db.session.add(new_user)
     db.session.commit()
 
+    from app.utils.user_ledger import save_user_to_ledger
+    save_user_to_ledger(new_user)
+
     flash(f"User account '{username}' created successfully as role '{role}'.", 'success')
     return redirect(url_for('admin.users'))
 
@@ -59,6 +62,8 @@ def update_role(user_id):
     if new_role in ['admin', 'analyst', 'user']:
         user.role = new_role
         db.session.commit()
+        from app.utils.user_ledger import save_user_to_ledger
+        save_user_to_ledger(user)
         flash(f"Role for '{user.username}' updated to '{new_role}'.", 'success')
     return redirect(url_for('admin.users'))
 

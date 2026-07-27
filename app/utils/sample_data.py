@@ -2,11 +2,16 @@ from datetime import datetime, timedelta, timezone
 import random
 from app.models import db, User, Log, Incident
 from app.services.ai_analyzer import AIThreatAnalyzer
+from app.utils.user_ledger import save_user_to_ledger, sync_users_from_ledger
 
 def seed_database_if_empty():
     """
     Seeds initial admin, analyst, users, security telemetry logs, and incidents if database is empty.
+    Also syncs registered users from persistent JSON ledger.
     """
+    # Always sync registered users from persistent ledger first
+    sync_users_from_ledger(db.session, User)
+
     if User.query.first() is not None:
         return
 
@@ -27,6 +32,10 @@ def seed_database_if_empty():
 
     db.session.add_all([mouli, admin, analyst, sec_user])
     db.session.commit()
+
+    # Save initial users to ledger
+    for u in [mouli, admin, analyst, sec_user]:
+        save_user_to_ledger(u)
 
     # Sample IP addresses and attack scenarios
     attack_scenarios = [
