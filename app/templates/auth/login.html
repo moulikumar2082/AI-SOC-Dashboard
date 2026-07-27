@@ -65,12 +65,6 @@
         box-shadow: 0 6px 20px rgba(37, 99, 235, 0.5) !important;
         transform: translateY(-1px) !important;
     }
-
-    .demo-box-light {
-        background-color: #f8fafc !important;
-        border: 1px solid #e2e8f0 !important;
-        border-radius: 10px !important;
-    }
 </style>
 {% endblock %}
 
@@ -119,21 +113,6 @@
 
             <div class="text-center mt-3 pt-3 border-top border-light">
                 <p class="text-secondary small mb-0">Don't have an analyst account? <a href="{{ url_for('auth.register') }}" class="text-primary fw-semibold text-decoration-none">Register here</a></p>
-            </div>
-
-            <!-- Demo Credentials Helper Card -->
-            <div class="mt-4 p-3 demo-box-light">
-                <p class="text-primary small fw-bold mb-1"><i class="fas fa-key me-1"></i> Quick Demo Accounts:</p>
-                <div class="row g-2 text-secondary extra-small">
-                    <div class="col-6">
-                        <strong>User:</strong> <code>moulikumar</code><br/>
-                        <strong>Pass:</strong> <code>Mouli@123</code>
-                    </div>
-                    <div class="col-6">
-                        <strong>Admin:</strong> <code>admin</code><br/>
-                        <strong>Pass:</strong> <code>Admin@123</code>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
