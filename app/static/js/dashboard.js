@@ -1,4 +1,4 @@
-/* AI SOC Dashboard JavaScript & Chart.js Visualizers */
+/* AI SOC Dashboard JavaScript & Cyber Visualizers */
 
 document.addEventListener('DOMContentLoaded', function () {
     // Sidebar Toggle
@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Initialize Chart.js Dashboards if chart elements exist
+    // Initialize Chart.js Dashboards
     initCharts();
 });
 
@@ -24,14 +24,14 @@ function initCharts() {
         return; // Not on dashboard page
     }
 
-    // Common Chart Defaults
-    Chart.defaults.color = '#94a3b8';
-    Chart.defaults.font.family = "'Inter', sans-serif";
+    // Cyber Chart Defaults
+    Chart.defaults.color = '#00f2fe';
+    Chart.defaults.font.family = "'Orbitron', 'JetBrains Mono', sans-serif";
 
     fetch('/api/chart-data')
         .then(response => response.json())
         .then(data => {
-            // 1. Severity Distribution (Doughnut)
+            // 1. Severity Distribution (Doughnut Chart)
             if (sevCanvas) {
                 new Chart(sevCanvas, {
                     type: 'doughnut',
@@ -40,40 +40,47 @@ function initCharts() {
                         datasets: [{
                             data: data.severity.data,
                             backgroundColor: [
-                                '#ff4d4d', // Critical
-                                '#ff9f43', // High
-                                '#a855f7', // Medium
-                                '#3b82f6', // Low
-                                '#64748b'  # Info
+                                '#ff2a6d', // Critical - Neon Red
+                                '#ff9f43', // High - Neon Orange
+                                '#9d4edd', // Medium - Neon Purple
+                                '#3b82f6', // Low - Neon Blue
+                                '#64748b'  // Info
                             ],
                             borderWidth: 2,
-                            borderColor: '#141c2e'
+                            borderColor: '#040812'
                         }]
                     },
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
                         plugins: {
-                            legend: { position: 'bottom', labels: { boxWidth: 12, padding: 15 } }
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    boxWidth: 12,
+                                    padding: 12,
+                                    font: { family: 'Orbitron', size: 10 }
+                                }
+                            }
                         },
-                        cutout: '70%'
+                        cutout: '72%'
                     }
                 });
             }
 
-            // 2. Attack Types (Bar Chart)
+            // 2. Attack Types (Cyber Bar Chart)
             if (attackCanvas) {
                 new Chart(attackCanvas, {
                     type: 'bar',
                     data: {
                         labels: data.attack_types.labels,
                         datasets: [{
-                            label: 'Incidents Count',
+                            label: 'Vector Count',
                             data: data.attack_types.data,
-                            backgroundColor: 'rgba(0, 242, 254, 0.65)',
+                            backgroundColor: 'rgba(0, 242, 254, 0.75)',
                             borderColor: '#00f2fe',
                             borderWidth: 1,
-                            borderRadius: 6
+                            borderRadius: 4
                         }]
                     },
                     options: {
@@ -81,28 +88,30 @@ function initCharts() {
                         maintainAspectRatio: false,
                         plugins: { legend: { display: false } },
                         scales: {
-                            x: { grid: { display: false } },
-                            y: { grid: { color: '#1e2d4a' }, beginAtZero: true }
+                            x: { grid: { display: false }, ticks: { font: { family: 'Rajdhani', size: 12 } } },
+                            y: { grid: { color: 'rgba(0, 242, 254, 0.15)' }, beginAtZero: true }
                         }
                     }
                 });
             }
 
-            // 3. Daily Alert Volume (Line Chart)
+            // 3. Daily Alert Volume (Neon Line Chart)
             if (dailyCanvas) {
                 new Chart(dailyCanvas, {
                     type: 'line',
                     data: {
                         labels: data.daily_alerts.labels,
                         datasets: [{
-                            label: 'Security Alerts',
+                            label: 'Alert Telemetry',
                             data: data.daily_alerts.data,
-                            borderColor: '#4facfe',
-                            backgroundColor: 'rgba(79, 172, 254, 0.15)',
+                            borderColor: '#05ffa1',
+                            backgroundColor: 'rgba(5, 255, 161, 0.12)',
                             fill: true,
                             tension: 0.35,
                             pointBackgroundColor: '#00f2fe',
-                            pointRadius: 4
+                            pointBorderColor: '#05ffa1',
+                            pointRadius: 5,
+                            pointHoverRadius: 7
                         }]
                     },
                     options: {
@@ -110,26 +119,26 @@ function initCharts() {
                         maintainAspectRatio: false,
                         plugins: { legend: { display: false } },
                         scales: {
-                            x: { grid: { color: '#1e2d4a' } },
-                            y: { grid: { color: '#1e2d4a' }, beginAtZero: true }
+                            x: { grid: { color: 'rgba(0, 242, 254, 0.15)' } },
+                            y: { grid: { color: 'rgba(0, 242, 254, 0.15)' }, beginAtZero: true }
                         }
                     }
                 });
             }
 
-            // 4. Top Source IPs (Horizontal Bar Chart)
+            // 4. Top Source IPs (Cyber Horizontal Bar Chart)
             if (topIpCanvas) {
                 new Chart(topIpCanvas, {
                     type: 'bar',
                     data: {
                         labels: data.top_ips.labels,
                         datasets: [{
-                            label: 'Log Volume',
+                            label: 'Log Count',
                             data: data.top_ips.data,
-                            backgroundColor: 'rgba(255, 77, 77, 0.65)',
-                            borderColor: '#ff4d4d',
+                            backgroundColor: 'rgba(255, 42, 109, 0.75)',
+                            borderColor: '#ff2a6d',
                             borderWidth: 1,
-                            borderRadius: 6
+                            borderRadius: 4
                         }]
                     },
                     options: {
@@ -138,8 +147,8 @@ function initCharts() {
                         maintainAspectRatio: false,
                         plugins: { legend: { display: false } },
                         scales: {
-                            x: { grid: { color: '#1e2d4a' }, beginAtZero: true },
-                            y: { grid: { display: false } }
+                            x: { grid: { color: 'rgba(0, 242, 254, 0.15)' }, beginAtZero: true },
+                            y: { grid: { display: false }, ticks: { font: { family: 'JetBrains Mono', size: 11 } } }
                         }
                     }
                 });
@@ -158,8 +167,8 @@ function triggerAIAnalysis(logId) {
             <div class="spinner-border text-info mb-3" role="status" style="width: 3rem; height: 3rem;">
                 <span class="visually-hidden">Analyzing...</span>
             </div>
-            <h5 class="text-light">AI Threat Analyzer in Progress...</h5>
-            <p class="text-muted">Querying security intelligence rules & MITRE ATT&CK engine...</p>
+            <h5 class="text-light font-cyber">AI THREAT ENGINE ANALYZING...</h5>
+            <p class="text-muted small">Interrogating neural security rules & MITRE ATT&CK database...</p>
         </div>
     `;
 
@@ -190,28 +199,28 @@ function triggerAIAnalysis(logId) {
                 <div class="ai-box mb-3">
                     <div class="ai-header">
                         <i class="fas fa-brain fs-4"></i>
-                        <span class="fs-5">AI Threat Summary</span>
+                        <span class="fs-5">AI THREAT INTELLIGENCE SUMMARY</span>
                         <span class="badge bg-danger ms-auto">${ai.threat_level || 'High'}</span>
                     </div>
-                    <p class="fs-6 mb-2"><strong>${ai.threat_summary}</strong></p>
-                    <p class="text-muted small mb-0"><strong>Attack Type:</strong> ${ai.attack_type}</p>
-                    <p class="text-muted small mb-0"><strong>MITRE ATT&CK Mapping:</strong> <span class="badge bg-secondary">${ai.mitre_attack}</span></p>
+                    <p class="fs-6 mb-2 text-light"><strong>${ai.threat_summary}</strong></p>
+                    <p class="text-muted small mb-1"><strong>Attack Vector:</strong> ${ai.attack_type}</p>
+                    <p class="text-muted small mb-0"><strong>MITRE ATT&CK Mapping:</strong> <span class="badge bg-dark border border-cyan text-cyan font-mono">${ai.mitre_attack}</span></p>
                 </div>
 
                 <div class="card bg-dark border-secondary mb-3">
-                    <div class="card-header bg-dark text-info font-monospace small">
-                        <i class="fas fa-info-circle me-1"></i> Technical Analysis & Root Cause
+                    <div class="card-header bg-dark text-cyan font-cyber small">
+                        <i class="fas fa-info-circle me-1"></i> Technical Threat Analysis
                     </div>
-                    <div class="card-body small text-light">
+                    <div class="card-body small text-light font-mono">
                         ${ai.explanation}
                     </div>
                 </div>
 
                 <div class="card bg-dark border-success">
-                    <div class="card-header bg-dark text-success font-monospace small">
-                        <i class="fas fa-shield-alt me-1"></i> Recommended Incident Remediation Actions
+                    <div class="card-header bg-dark text-success font-cyber small">
+                        <i class="fas fa-shield-halved me-1"></i> Actionable Remediation Steps
                     </div>
-                    <div class="card-body small text-light">
+                    <div class="card-body small text-light font-mono">
                         ${actionsHtml}
                     </div>
                 </div>
