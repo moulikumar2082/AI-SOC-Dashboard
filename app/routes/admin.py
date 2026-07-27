@@ -52,6 +52,10 @@ def update_role(user_id):
     user = User.query.get_or_404(user_id)
     new_role = request.form.get('role')
     
+    if user.username == 'moulikumar' and current_user.username != 'moulikumar':
+        flash("Only Chandam Mouli Kumar can modify the Primary Super Admin role.", 'warning')
+        return redirect(url_for('admin.users'))
+
     if new_role in ['admin', 'analyst', 'user']:
         user.role = new_role
         db.session.commit()
@@ -63,8 +67,8 @@ def update_role(user_id):
 @admin_required
 def toggle_status(user_id):
     user = User.query.get_or_404(user_id)
-    if user.id == current_user.id:
-        flash("You cannot deactivate your own active session account.", 'warning')
+    if user.id == current_user.id or user.username == 'moulikumar':
+        flash("The Super Admin account cannot be deactivated.", 'warning')
         return redirect(url_for('admin.users'))
 
     user.is_active = not user.is_active
