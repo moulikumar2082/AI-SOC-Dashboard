@@ -1,54 +1,139 @@
 {% extends "base.html" %}
-{% block title %}Register - SOC Dashboard{% endblock %}
+{% block title %}Login - SOC Dashboard{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Light Theme Styling Specifically for Login Page */
+    body {
+        background-color: #f4f6f9 !important;
+        background-image: radial-gradient(#cbd5e1 1px, transparent 1px) !important;
+        background-size: 24px 24px !important;
+        color: #1e293b !important;
+    }
+
+    .login-card {
+        background: #ffffff !important;
+        border: 1px solid #e2e8f0 !important;
+        border-radius: 16px !important;
+        box-shadow: 0 15px 35px rgba(15, 23, 42, 0.08), 0 5px 15px rgba(0, 0, 0, 0.04) !important;
+    }
+
+    .login-card h3 {
+        color: #0f172a !important;
+        font-family: 'Inter', sans-serif !important;
+        letter-spacing: normal !important;
+    }
+
+    .login-card label {
+        color: #475569 !important;
+    }
+
+    .login-card .form-control {
+        background-color: #f8fafc !important;
+        border: 1px solid #cbd5e1 !important;
+        color: #0f172a !important;
+        font-family: 'Inter', sans-serif !important;
+        border-radius: 8px !important;
+    }
+
+    .login-card .form-control:focus {
+        background-color: #ffffff !important;
+        border-color: #2563eb !important;
+        box-shadow: 0 0 0 0.2rem rgba(37, 99, 235, 0.15) !important;
+    }
+
+    .login-card .input-group-text {
+        background-color: #f1f5f9 !important;
+        border-color: #cbd5e1 !important;
+        color: #2563eb !important;
+    }
+
+    .btn-login-light {
+        background: linear-gradient(135deg, #2563eb, #1d4ed8) !important;
+        color: #ffffff !important;
+        font-family: 'Inter', sans-serif !important;
+        font-weight: 600 !important;
+        border: none !important;
+        border-radius: 8px !important;
+        box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35) !important;
+        transition: all 0.25s ease !important;
+    }
+
+    .btn-login-light:hover {
+        background: linear-gradient(135deg, #1d4ed8, #1e40af) !important;
+        color: #ffffff !important;
+        box-shadow: 0 6px 20px rgba(37, 99, 235, 0.5) !important;
+        transform: translateY(-1px) !important;
+    }
+
+    .demo-box-light {
+        background-color: #f8fafc !important;
+        border: 1px solid #e2e8f0 !important;
+        border-radius: 10px !important;
+    }
+</style>
+{% endblock %}
 
 {% block content %}
 <div class="row justify-content-center align-items-center min-vh-80 my-5">
     <div class="col-md-6 col-lg-5">
-        <div class="soc-card p-4">
+        <div class="login-card p-4 p-md-5">
             <div class="text-center mb-4">
-                <i class="fas fa-user-plus text-cyan display-4 mb-2"></i>
-                <h3 class="fw-bold text-light">Register Analyst Account</h3>
-                <p class="text-muted small">Create credentials for security operations dashboard</p>
+                <div class="d-inline-block p-3 rounded-circle bg-blue-50 mb-3" style="background: rgba(37, 99, 235, 0.08);">
+                    <i class="fas fa-shield-halved text-primary display-5"></i>
+                </div>
+                <h3 class="fw-bold text-dark mb-1">SOC Operations Sign In</h3>
+                <p class="text-secondary small">Access security telemetry & threat intelligence dashboard</p>
             </div>
 
-            <form action="{{ url_for('auth.register') }}" method="POST">
+            <form action="{{ url_for('auth.login') }}" method="POST">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-
+                
                 <div class="mb-3">
-                    <label class="form-label text-muted small fw-semibold">Username</label>
-                    <input type="text" name="username" class="form-control" placeholder="Choose username" required>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label text-muted small fw-semibold">Email Address</label>
-                    <input type="email" name="email" class="form-control" placeholder="analyst@organization.com" required>
+                    <label class="form-label small fw-semibold">Username</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-user"></i></span>
+                        <input type="text" name="username" class="form-control" placeholder="Enter username" required autofocus>
+                    </div>
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label text-muted small fw-semibold">Assigned Role</label>
-                    <select name="role" class="form-select bg-dark text-light border-secondary">
-                        <option value="analyst" selected>Security Analyst</option>
-                        <option value="user">Standard User</option>
-                    </select>
+                    <label class="form-label small fw-semibold">Password</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                        <input type="password" name="password" class="form-control" placeholder="Enter password" required>
+                    </div>
                 </div>
 
-                <div class="mb-3">
-                    <label class="form-label text-muted small fw-semibold">Password</label>
-                    <input type="password" name="password" class="form-control" placeholder="Password" required>
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="remember" id="remember">
+                        <label class="form-check-label text-secondary small" for="remember">Remember session</label>
+                    </div>
                 </div>
 
-                <div class="mb-4">
-                    <label class="form-label text-muted small fw-semibold">Confirm Password</label>
-                    <input type="password" name="confirm_password" class="form-control" placeholder="Confirm password" required>
-                </div>
-
-                <button type="submit" class="btn btn-cyber-primary w-100 py-2 mb-3">
-                    <i class="fas fa-user-check me-2"></i> Create Analyst Account
+                <button type="submit" class="btn btn-login-light w-100 py-2.5 mb-3">
+                    <i class="fas fa-right-to-bracket me-2"></i> Authenticate Session
                 </button>
             </form>
 
-            <div class="text-center mt-3 pt-3 border-top border-secondary">
-                <p class="text-muted small mb-0">Already registered? <a href="{{ url_for('auth.login') }}" class="text-cyan text-decoration-none">Sign in here</a></p>
+            <div class="text-center mt-3 pt-3 border-top border-light">
+                <p class="text-secondary small mb-0">Don't have an analyst account? <a href="{{ url_for('auth.register') }}" class="text-primary fw-semibold text-decoration-none">Register here</a></p>
+            </div>
+
+            <!-- Demo Credentials Helper Card -->
+            <div class="mt-4 p-3 demo-box-light">
+                <p class="text-primary small fw-bold mb-1"><i class="fas fa-key me-1"></i> Quick Demo Accounts:</p>
+                <div class="row g-2 text-secondary extra-small">
+                    <div class="col-6">
+                        <strong>User:</strong> <code>moulikumar</code><br/>
+                        <strong>Pass:</strong> <code>Mouli@123</code>
+                    </div>
+                    <div class="col-6">
+                        <strong>Admin:</strong> <code>admin</code><br/>
+                        <strong>Pass:</strong> <code>Admin@123</code>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
