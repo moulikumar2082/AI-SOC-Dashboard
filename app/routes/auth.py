@@ -46,7 +46,10 @@ def register():
         email = request.form.get('email', '').strip()
         password = request.form.get('password', '')
         confirm_password = request.form.get('confirm_password', '')
-        role = request.form.get('role', 'analyst') # Analyst or User
+        
+        # New public registrations get restricted 'user' role
+        # Only moulikumar holds full Primary Super Admin privileges
+        role = 'admin' if username in ['moulikumar', 'chandam_mouli_kumar'] else 'user'
 
         if password != confirm_password:
             flash('Passwords do not match.', 'danger')
