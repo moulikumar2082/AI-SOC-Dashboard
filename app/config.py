@@ -31,5 +31,10 @@ class Config:
     SSL_CERT = os.environ.get('SSL_CERT', os.path.join(BASE_DIR, 'certs', 'cert.pem'))
     SSL_KEY = os.environ.get('SSL_KEY', os.path.join(BASE_DIR, 'certs', 'key.pem'))
 
-    # Security Settings
+    # Security & Session Settings
     WTF_CSRF_ENABLED = True
+    SESSION_COOKIE_NAME = 'soc_dashboard_session'
+    PERMANENT_SESSION_LIFETIME = 2592000  # 30 days in seconds
+    REMEMBER_COOKIE_DURATION = 2592000
+    SESSION_COOKIE_HTTPONLY = True
+    SESSION_COOKIE_SAMESITE = 'Lax'

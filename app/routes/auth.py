@@ -24,7 +24,9 @@ def login():
             flash('Your account has been deactivated. Contact an administrator.', 'warning')
             return redirect(url_for('auth.login'))
 
-        login_user(user, remember=remember)
+        from flask import session
+        login_user(user, remember=True)
+        session.permanent = True
         flash(f'Welcome back, {user.username}! SOC Operations session active.', 'success')
         
         next_page = request.args.get('next')
@@ -65,8 +67,12 @@ def register():
         db.session.add(new_user)
         db.session.commit()
 
-        flash('Registration successful! You can now log in to the SOC dashboard.', 'success')
-        return redirect(url_for('auth.login'))
+        from flask import session
+        login_user(new_user, remember=True)
+        session.permanent = True
+
+        flash(f'Account created successfully! Welcome to SOC Operations, {new_user.username}.', 'success')
+        return redirect(url_for('main.dashboard'))
 
     return render_template('auth/register.html')
 

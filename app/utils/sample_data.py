@@ -13,6 +13,9 @@ def seed_database_if_empty():
     print("Seeding SOC Dashboard sample users, security logs, and incidents...")
 
     # Create Default Users
+    mouli = User(username='moulikumar', email='chandammoulikumar@soc.internal', role='admin')
+    mouli.set_password('Mouli@123')
+
     admin = User(username='admin', email='admin@soc.internal', role='admin')
     admin.set_password('Admin@123')
 
@@ -22,7 +25,7 @@ def seed_database_if_empty():
     sec_user = User(username='user', email='user@soc.internal', role='user')
     sec_user.set_password('User@123')
 
-    db.session.add_all([admin, analyst, sec_user])
+    db.session.add_all([mouli, admin, analyst, sec_user])
     db.session.commit()
 
     # Sample IP addresses and attack scenarios
