@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+{% block title %}Incident INC-{{ incident.id }} - SOC Dashboard{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold text-light mb-1">
+            <i class="fas fa-triangle-exclamation text-cyan me-2"></i>Incident INC-{{ incident.id }}: {{ incident.title }}
+        </h2>
+        <p class="text-muted small mb-0">Status workflow tracking, remediation notes, and timeline logs</p>
+    </div>
+    <div>
+        <a href="{{ url_for('incidents.index') }}" class="btn btn-outline-secondary btn-sm">
+            <i class="fas fa-arrow-left me-1"></i> Back to Incidents
+        </a>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Left Column: Investigation Details & Timeline -->
+    <div class="col-lg-7">
+        <div class="soc-card p-4 mb-4">
+            <h5 class="fw-bold text-light mb-3"><i class="fas fa-file-lines text-info me-2"></i>Incident Description</h5>
+            <p class="text-light bg-dark p-3 rounded border border-secondary">{{ incident.description }}</p>
+
+            {% if incident.log %}
+            <div class="p-3 bg-dark rounded border border-warning">
+                <h6 class="text-warning fw-bold mb-1"><i class="fas fa-link me-1"></i> Linked Telemetry Log #{{ incident.log.id }}</h6>
+                <p class="font-monospace small mb-1 text-light"><strong>IP:</strong> {{ incident.log.source_ip }} | <strong>Attack:</strong> {{ incident.log.attack_type }} | <strong>Risk:</strong> {{ incident.log.risk_score }}/100</p>
+                <p class="font-monospace extra-small text-muted mb-2">{{ incident.log.event }}</p>
+                <a href="{{ url_for('logs.detail', log_id=incident.log.id) }}" class="btn btn-sm btn-cyber-outline py-0 px-2">Inspect Log Payload</a>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Timeline Log Feed -->
+        <div class="soc-card p-4">
+            <h5 class="fw-bold text-light mb-3"><i class="fas fa-timeline text-cyan me-2"></i>Investigation Timeline</h5>
+            <div class="timeline position-relative ps-3 border-start border-secondary">
+                {% for item in incident.timeline %}
+                <div class="mb-3 position-relative ps-3">
+                    <div class="position-absolute start-0 top-0 translate-middle-x bg-info rounded-circle" style="width: 10px; height: 10px; margin-left: -1px;"></div>
+                    <div class="bg-dark p-2.5 rounded border border-secondary">
+                        <div class="d-flex justify-content-between text-muted extra-small mb-1">
+                            <span class="fw-bold text-cyan"><i class="fas fa-user-circle me-1"></i>{{ item.author }}</span>
+                            <span class="font-monospace">{{ item.timestamp }}</span>
+                        </div>
+                        <p class="small text-light mb-0">{{ item.note }}</p>
+                    </div>
+                </div>
+                {% else %}
+                <p class="text-muted small">No timeline events recorded.</p>
+                {% endfor %}
+            </div>
+
+            <!-- Add Note Form -->
+            <form action="{{ url_for('incidents.detail', incident_id=incident.id) }}" method="POST" class="mt-4 pt-3 border-top border-secondary">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="action" value="add_note">
+                <div class="mb-2">
+                    <textarea name="note" class="form-control form-control-sm bg-dark text-light border-secondary" rows="2" placeholder="Add analyst investigation note..." required></textarea>
+                </div>
+                <button type="submit" class="btn btn-sm btn-cyber-primary"><i class="fas fa-plus me-1"></i> Append Note to Timeline</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Right Column: Status & Assignment Operations -->
+    <div class="col-lg-5">
+        <div class="soc-card p-4 mb-4">
+            <h5 class="fw-bold text-light mb-3"><i class="fas fa-sliders text-cyan me-2"></i>Incident Workflow Triage</h5>
+            
+            <form action="{{ url_for('incidents.detail', incident_id=incident.id) }}" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="action" value="update_status">
+
+                <div class="mb-3">
+                    <label class="form-label text-muted small fw-semibold">Current Status</label>
+                    <select name="status" class="form-select bg-dark text-light border-secondary">
+                        <option value="Open" {% if incident.status == 'Open' %}selected{% endif %}>Open</option>
+                        <option value="In Progress" {% if incident.status == 'In Progress' %}selected{% endif %}>In Progress</option>
+                        <option value="Resolved" {% if incident.status == 'Resolved' %}selected{% endif %}>Resolved</option>
+                        <option value="Closed" {% if incident.status == 'Closed' %}selected{% endif %}>Closed</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label text-muted small fw-semibold">Priority Level</label>
+                    <select name="priority" class="form-select bg-dark text-light border-secondary">
+                        <option value="Critical" {% if incident.priority == 'Critical' %}selected{% endif %}>Critical</option>
+                        <option value="High" {% if incident.priority == 'High' %}selected{% endif %}>High</option>
+                        <option value="Medium" {% if incident.priority == 'Medium' %}selected{% endif %}>Medium</option>
+                        <option value="Low" {% if incident.priority == 'Low' %}selected{% endif %}>Low</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label text-muted small fw-semibold">Assigned Analyst</label>
+                    <select name="assigned_to_id" class="form-select bg-dark text-light border-secondary">
+                        {% for a in analysts %}
+                        <option value="{{ a.id }}" {% if incident.assigned_to_id == a.id %}selected{% endif %}>{{ a.username }} ({{ a.role|upper }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label text-muted small fw-semibold">Mitigation & Resolution Notes</label>
+                    <textarea name="mitigation_notes" class="form-control bg-dark text-light border-secondary" rows="3" placeholder="Enter remediation steps applied...">{{ incident.mitigation_notes or '' }}</textarea>
+                </div>
+
+                <button type="submit" class="btn btn-cyber-primary w-100 py-2">
+                    <i class="fas fa-floppy-disk me-1"></i> Update Incident State
+                </button>
+            </form>
+        </div>
+
+        <div class="soc-card p-4">
+            <h6 class="text-muted small fw-bold text-uppercase mb-3">Incident Metadata</h6>
+            <div class="small">
+                <p class="mb-2"><strong>Created At:</strong> <span class="font-monospace text-light">{{ incident.created_at.strftime('%Y-%m-%d %H:%M:%S UTC') }}</span></p>
+                <p class="mb-0"><strong>Last Updated:</strong> <span class="font-monospace text-light">{{ incident.updated_at.strftime('%Y-%m-%d %H:%M:%S UTC') }}</span></p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

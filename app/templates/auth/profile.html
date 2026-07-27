@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}User Profile - SOC Dashboard{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="soc-card p-4">
+            <div class="d-flex align-items-center gap-3 mb-4">
+                <div class="bg-dark p-3 rounded-circle border border-cyan">
+                    <i class="fas fa-user-shield text-cyan fs-1"></i>
+                </div>
+                <div>
+                    <h3 class="fw-bold text-light mb-1">{{ user.username }}</h3>
+                    <span class="badge bg-cyan text-dark font-monospace">{{ user.role|upper }}</span>
+                    <span class="badge {% if user.is_active %}bg-success{% else %}bg-danger{% endif %} ms-1">{% if user.is_active %}Active{% else %}Inactive{% endif %}</span>
+                </div>
+            </div>
+
+            <hr class="border-secondary mb-4">
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="text-muted small fw-semibold">Email Address</label>
+                    <p class="fs-6 text-light font-monospace bg-dark p-2 rounded border border-secondary">{{ user.email }}</p>
+                </div>
+                <div class="col-md-6">
+                    <label class="text-muted small fw-semibold">Account Creation Timestamp</label>
+                    <p class="fs-6 text-light font-monospace bg-dark p-2 rounded border border-secondary">{{ user.created_at.strftime('%Y-%m-%d %H:%M:%S UTC') }}</p>
+                </div>
+            </div>
+
+            <div class="mt-4 p-3 bg-dark border border-secondary rounded">
+                <h6 class="text-info fw-bold mb-2"><i class="fas fa-shield-cat me-2"></i> Security Analyst Permissions:</h6>
+                <ul class="text-muted small mb-0">
+                    <li>Ingest, upload, and filter multi-source security logs (.log, .txt, .csv).</li>
+                    <li>Trigger automated Threat Detection Engine & AI Threat Analysis models.</li>
+                    <li>Create, assign, update, and resolve incident investigation timelines.</li>
+                    <li>Generate downloadable ReportLab PDF security intelligence summaries.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

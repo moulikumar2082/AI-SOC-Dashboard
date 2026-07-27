@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block title %}Incident Operations - SOC Dashboard{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold text-light mb-1">
+            <i class="fas fa-triangle-exclamation text-cyan me-2"></i>Incident Management & Triage
+        </h2>
+        <p class="text-muted small mb-0">Track active security incidents, assign analysts, and record investigation mitigation steps</p>
+    </div>
+    <div>
+        <a href="{{ url_for('incidents.create') }}" class="btn btn-cyber-primary btn-sm">
+            <i class="fas fa-plus me-1"></i> Create Incident
+        </a>
+    </div>
+</div>
+
+<!-- Filters Bar -->
+<div class="soc-card p-3 mb-4">
+    <form action="{{ url_for('incidents.index') }}" method="GET" class="row g-2 align-items-center">
+        <div class="col-md-4">
+            <select name="status" class="form-select form-select-sm">
+                <option value="">-- All Statuses --</option>
+                <option value="Open" {% if current_status == 'Open' %}selected{% endif %}>Open</option>
+                <option value="In Progress" {% if current_status == 'In Progress' %}selected{% endif %}>In Progress</option>
+                <option value="Resolved" {% if current_status == 'Resolved' %}selected{% endif %}>Resolved</option>
+                <option value="Closed" {% if current_status == 'Closed' %}selected{% endif %}>Closed</option>
+            </select>
+        </div>
+        <div class="col-md-4">
+            <select name="priority" class="form-select form-select-sm">
+                <option value="">-- All Priorities --</option>
+                <option value="Critical" {% if current_priority == 'Critical' %}selected{% endif %}>Critical</option>
+                <option value="High" {% if current_priority == 'High' %}selected{% endif %}>High</option>
+                <option value="Medium" {% if current_priority == 'Medium' %}selected{% endif %}>Medium</option>
+                <option value="Low" {% if current_priority == 'Low' %}selected{% endif %}>Low</option>
+            </select>
+        </div>
+        <div class="col-md-4 d-flex gap-2">
+            <button type="submit" class="btn btn-sm btn-cyber-primary w-100"><i class="fas fa-filter me-1"></i> Filter</button>
+            <a href="{{ url_for('incidents.index') }}" class="btn btn-sm btn-outline-secondary"><i class="fas fa-rotate-left"></i></a>
+        </div>
+    </form>
+</div>
+
+<!-- Incidents Data Grid -->
+<div class="row g-3">
+    {% for inc in incidents %}
+    <div class="col-md-6 col-xl-4">
+        <div class="soc-card p-3 h-100 d-flex flex-column">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+                <span class="badge font-monospace {{ inc.priority_badge_class }}">{{ inc.priority }} PRIORITY</span>
+                <span class="badge {{ inc.status_badge_class }}">{{ inc.status }}</span>
+            </div>
+
+            <h5 class="fw-bold mb-2">
+                <a href="{{ url_for('incidents.detail', incident_id=inc.id) }}" class="text-light text-decoration-none hover-cyan">
+                    INC-{{ inc.id }}: {{ inc.title }}
+                </a>
+            </h5>
+
+            <p class="text-muted small flex-grow-1 text-truncate-2 mb-3">{{ inc.description }}</p>
+
+            <div class="pt-2 border-top border-secondary d-flex justify-content-between align-items-center extra-small">
+                <span class="text-info font-monospace">
+                    <i class="fas fa-user-ninja me-1"></i>{{ inc.assigned_analyst.username if inc.assigned_analyst else 'Unassigned' }}
+                </span>
+                <span class="text-muted">
+                    <i class="far fa-clock me-1"></i>{{ inc.created_at.strftime('%m-%d %H:%M') }}
+                </span>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="col-12">
+        <div class="soc-card text-center py-5">
+            <i class="fas fa-shield-cat text-muted display-4 mb-3"></i>
+            <h5 class="text-light">No Incidents Found</h5>
+            <p class="text-muted small">No security incidents match the selected filter criteria.</p>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

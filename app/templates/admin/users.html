@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+{% block title %}Admin Panel - SOC Dashboard{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold text-light mb-1">
+            <i class="fas fa-users-gear text-cyan me-2"></i>SOC Administrator Control Panel
+        </h2>
+        <p class="text-muted small mb-0">Role-based access control (RBAC), user provisioning, and database maintenance</p>
+    </div>
+    <div class="d-flex gap-2">
+        <button class="btn btn-cyber-primary btn-sm" data-bs-toggle="modal" data-bs-target="#createUserModal">
+            <i class="fas fa-user-plus me-1"></i> Provision User Account
+        </button>
+        <form action="{{ url_for('admin.clear_logs') }}" method="POST" onsubmit="return confirm('Purge all security telemetry logs from system?');">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="btn btn-outline-danger btn-sm"><i class="fas fa-trash me-1"></i> Purge All Logs</button>
+        </form>
+    </div>
+</div>
+
+<!-- System Stats Summary -->
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="soc-card p-3 d-flex align-items-center gap-3">
+            <div class="kpi-icon kpi-total"><i class="fas fa-users"></i></div>
+            <div>
+                <div class="kpi-val">{{ users|length }}</div>
+                <div class="kpi-label">Registered Accounts</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="soc-card p-3 d-flex align-items-center gap-3">
+            <div class="kpi-icon kpi-low"><i class="fas fa-database"></i></div>
+            <div>
+                <div class="kpi-val text-info">{{ total_logs }}</div>
+                <div class="kpi-label">Stored Logs</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="soc-card p-3 d-flex align-items-center gap-3">
+            <div class="kpi-icon kpi-incident"><i class="fas fa-shield"></i></div>
+            <div>
+                <div class="kpi-val text-cyan">{{ total_incidents }}</div>
+                <div class="kpi-label">Total Incidents</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- User Accounts Table -->
+<div class="soc-card">
+    <div class="card-header">
+        <span class="fw-bold"><i class="fas fa-user-shield text-cyan me-2"></i>User Access Management (RBAC)</span>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-cyber align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                        <th>Registered Date</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for u in users %}
+                    <tr>
+                        <td class="fw-bold text-light font-monospace">
+                            <i class="fas fa-user-circle me-1 text-info"></i>{{ u.username }}
+                            {% if u.id == current_user.id %}<span class="badge bg-secondary ms-1">YOU</span>{% endif %}
+                        </td>
+                        <td class="font-monospace small text-muted">{{ u.email }}</td>
+                        <td>
+                            <form action="{{ url_for('admin.update_role', user_id=u.id) }}" method="POST" class="d-inline">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <select name="role" class="form-select form-select-sm bg-dark text-light border-secondary d-inline-block w-auto" onchange="this.form.submit()">
+                                    <option value="admin" {% if u.role == 'admin' %}selected{% endif %}>Admin</option>
+                                    <option value="analyst" {% if u.role == 'analyst' %}selected{% endif %}>Analyst</option>
+                                    <option value="user" {% if u.role == 'user' %}selected{% endif %}>User</option>
+                                </select>
+                            </form>
+                        </td>
+                        <td>
+                            <form action="{{ url_for('admin.toggle_status', user_id=u.id) }}" method="POST" class="d-inline">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button type="submit" class="btn btn-sm {% if u.is_active %}btn-outline-success{% else %}btn-outline-danger{% endif %} py-0 px-2">
+                                    {% if u.is_active %}<i class="fas fa-check me-1"></i>Active{% else %}<i class="fas fa-ban me-1"></i>Disabled{% endif %}
+                                </button>
+                            </form>
+                        </td>
+                        <td class="font-monospace small text-muted">{{ u.created_at.strftime('%Y-%m-%d') }}</td>
+                        <td class="text-end">
+                            {% if u.id != current_user.id %}
+                            <form action="{{ url_for('admin.delete_user', user_id=u.id) }}" method="POST" class="d-inline" onsubmit="return confirm('Permanently delete account for {{ u.username }}?');">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button type="submit" class="btn btn-sm btn-outline-danger py-0 px-2"><i class="fas fa-user-xmark"></i> Delete</button>
+                            </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Create User -->
+<div class="modal fade" id="createUserModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-cyan"><i class="fas fa-user-plus me-2"></i>Provision Account</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{{ url_for('admin.create_user') }}" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label text-muted small">Username</label>
+                        <input type="text" name="username" class="form-control" placeholder="Enter username" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-muted small">Email Address</label>
+                        <input type="email" name="email" class="form-control" placeholder="user@soc.internal" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-muted small">Password</label>
+                        <input type="password" name="password" class="form-control" placeholder="Password" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-muted small">Role</label>
+                        <select name="role" class="form-select bg-dark text-light border-secondary">
+                            <option value="analyst">Security Analyst</option>
+                            <option value="admin">Administrator</option>
+                            <option value="user">Standard User</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-cyber-primary btn-sm">Provision Account</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

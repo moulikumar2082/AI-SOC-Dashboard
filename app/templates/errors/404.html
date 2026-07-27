@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}404 Page Not Found - SOC Dashboard{% endblock %}
+
+{% block content %}
+<div class="text-center py-5">
+    <i class="fas fa-radar text-cyan display-1 mb-3"></i>
+    <h1 class="display-4 fw-bold text-light">404</h1>
+    <h4 class="text-muted mb-4">Target Security Telemetry Resource Not Found</h4>
+    <a href="{{ url_for('main.dashboard') }}" class="btn btn-cyber-primary">
+        <i class="fas fa-house me-1"></i> Return to SOC Operations Center
+    </a>
+</div>
+{% endblock %}

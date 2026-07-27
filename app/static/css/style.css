@@ -1,0 +1,358 @@
+/* AI-Powered SOC Dashboard - Dark Cybersecurity Theme */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+:root {
+    --bg-dark: #0b0f19;
+    --bg-card: #141c2e;
+    --bg-card-hover: #1c273e;
+    --border-color: #1e2d4a;
+    --text-main: #f1f5f9;
+    --text-muted: #94a3b8;
+    
+    /* Neon Cyber Accents */
+    --accent-cyan: #00f2fe;
+    --accent-blue: #4facfe;
+    --accent-green: #00e676;
+    --accent-warning: #ff9f43;
+    --accent-danger: #ff4d4d;
+    --accent-purple: #a855f7;
+
+    --sidebar-width: 250px;
+}
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
+    min-height: 100vh;
+}
+
+code, pre, .font-mono {
+    font-family: 'JetBrains Mono', monospace;
+}
+
+/* Layout */
+#wrapper {
+    display: flex;
+    width: 100%;
+    align-items: stretch;
+    min-height: 100vh;
+}
+
+/* Sidebar */
+#sidebar {
+    min-width: var(--sidebar-width);
+    max-width: var(--sidebar-width);
+    background: #090d16;
+    border-right: 1px solid var(--border-color);
+    transition: all 0.3s;
+    display: flex;
+    flex-direction: column;
+    z-index: 1000;
+}
+
+#sidebar .sidebar-brand {
+    padding: 1.5rem 1.25rem;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+#sidebar .sidebar-brand span {
+    background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.sidebar-nav {
+    padding: 1rem 0;
+    list-style: none;
+    margin: 0;
+}
+
+.sidebar-nav .nav-header {
+    padding: 0.75rem 1.25rem 0.25rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #475569;
+    letter-spacing: 0.05em;
+}
+
+.sidebar-nav li a {
+    padding: 0.75rem 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+    border-left: 3px solid transparent;
+}
+
+.sidebar-nav li a:hover {
+    color: var(--text-main);
+    background: rgba(79, 172, 254, 0.08);
+    border-left-color: var(--accent-blue);
+}
+
+.sidebar-nav li.active a {
+    color: var(--accent-cyan);
+    background: rgba(0, 242, 254, 0.1);
+    border-left-color: var(--accent-cyan);
+    font-weight: 600;
+}
+
+/* Navbar */
+.top-navbar {
+    background: #0e1626;
+    border-bottom: 1px solid var(--border-color);
+    padding: 0.85rem 1.5rem;
+}
+
+/* Main Content Surface */
+#content {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.main-body {
+    padding: 1.75rem;
+    flex: 1;
+}
+
+/* Glassmorphism SOC Cards */
+.soc-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    overflow: hidden;
+}
+
+.soc-card:hover {
+    box-shadow: 0 6px 25px rgba(0, 242, 254, 0.08);
+}
+
+.soc-card .card-header {
+    background: rgba(15, 23, 42, 0.6);
+    border-bottom: 1px solid var(--border-color);
+    padding: 1rem 1.25rem;
+    font-weight: 600;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.soc-card .card-body {
+    padding: 1.25rem;
+}
+
+/* Metric KPI Cards */
+.kpi-card {
+    position: relative;
+    padding: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.kpi-card .kpi-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+.kpi-icon.kpi-total { background: rgba(79, 172, 254, 0.15); color: var(--accent-blue); }
+.kpi-icon.kpi-critical { background: rgba(255, 77, 77, 0.15); color: var(--accent-danger); }
+.kpi-icon.kpi-high { background: rgba(255, 159, 67, 0.15); color: var(--accent-warning); }
+.kpi-icon.kpi-medium { background: rgba(168, 85, 247, 0.15); color: var(--accent-purple); }
+.kpi-icon.kpi-low { background: rgba(0, 230, 118, 0.15); color: var(--accent-green); }
+.kpi-icon.kpi-incident { background: rgba(0, 242, 254, 0.15); color: var(--accent-cyan); }
+
+.kpi-val {
+    font-size: 1.75rem;
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--text-main);
+}
+
+.kpi-label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Cyber Badges */
+.badge-cyber {
+    padding: 0.35em 0.7em;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border-radius: 6px;
+    letter-spacing: 0.03em;
+}
+
+.badge-critical { background: rgba(255, 77, 77, 0.2); color: #ff6b6b; border: 1px solid #ff4d4d; }
+.badge-high { background: rgba(255, 159, 67, 0.2); color: #ffa94d; border: 1px solid #ff9f43; }
+.badge-medium { background: rgba(168, 85, 247, 0.2); color: #c084fc; border: 1px solid #a855f7; }
+.badge-low { background: rgba(79, 172, 254, 0.2); color: #60a5fa; border: 1px solid #3b82f6; }
+.badge-info { background: rgba(148, 163, 184, 0.15); color: #cbd5e1; border: 1px solid #475569; }
+
+/* Custom Tables */
+.table-cyber {
+    width: 100%;
+    color: var(--text-main);
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.table-cyber th {
+    background: #0f172a;
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.9rem 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.table-cyber td {
+    padding: 0.85rem 1rem;
+    font-size: 0.875rem;
+    border-bottom: 1px solid rgba(30, 45, 74, 0.6);
+    vertical-align: middle;
+}
+
+.table-cyber tbody tr {
+    transition: background 0.15s ease;
+}
+
+.table-cyber tbody tr:hover {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+/* Modals & Forms */
+.modal-content {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+}
+
+.modal-header {
+    border-bottom: 1px solid var(--border-color);
+    background: #0f172a;
+}
+
+.modal-footer {
+    border-top: 1px solid var(--border-color);
+    background: #0f172a;
+}
+
+.form-control, .form-select {
+    background-color: #0d1321;
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    border-radius: 8px;
+}
+
+.form-control:focus, .form-select:focus {
+    background-color: #0f172a;
+    border-color: var(--accent-cyan);
+    color: var(--text-main);
+    box-shadow: 0 0 0 0.25rem rgba(0, 242, 254, 0.15);
+}
+
+/* Cyber Buttons */
+.btn-cyber-primary {
+    background: linear-gradient(135deg, #00c6ff, #0072ff);
+    color: #fff;
+    font-weight: 600;
+    border: none;
+    box-shadow: 0 4px 15px rgba(0, 114, 255, 0.3);
+    transition: all 0.2s ease;
+}
+
+.btn-cyber-primary:hover {
+    background: linear-gradient(135deg, #0072ff, #00c6ff);
+    color: #fff;
+    box-shadow: 0 6px 20px rgba(0, 114, 255, 0.5);
+}
+
+.btn-cyber-danger {
+    background: linear-gradient(135deg, #ff416c, #ff4b2b);
+    color: #fff;
+    font-weight: 600;
+    border: none;
+}
+
+.btn-cyber-outline {
+    border: 1px solid var(--accent-cyan);
+    color: var(--accent-cyan);
+    background: transparent;
+}
+
+.btn-cyber-outline:hover {
+    background: rgba(0, 242, 254, 0.1);
+    color: #fff;
+}
+
+/* AI Insight Box */
+.ai-box {
+    background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(20, 28, 46, 0.95));
+    border: 1px solid rgba(0, 242, 254, 0.3);
+    border-left: 4px solid var(--accent-cyan);
+    border-radius: 10px;
+    padding: 1.25rem;
+    position: relative;
+    box-shadow: 0 4px 20px rgba(0, 242, 254, 0.05);
+}
+
+.ai-box .ai-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--accent-cyan);
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+}
+
+/* Risk Meter */
+.risk-meter {
+    height: 8px;
+    border-radius: 4px;
+    background: #1e293b;
+    overflow: hidden;
+}
+
+.risk-fill {
+    height: 100%;
+    transition: width 0.5s ease-in-out;
+}
+
+/* Responsive adjustments */
+@media (max-width: 991.98px) {
+    #sidebar {
+        margin-left: calc(-1 * var(--sidebar-width));
+    }
+    #sidebar.active {
+        margin-left: 0;
+    }
+}

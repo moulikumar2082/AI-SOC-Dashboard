@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}500 Server Error - SOC Dashboard{% endblock %}
+
+{% block content %}
+<div class="text-center py-5">
+    <i class="fas fa-triangle-exclamation text-danger display-1 mb-3"></i>
+    <h1 class="display-4 fw-bold text-light">500</h1>
+    <h4 class="text-muted mb-4">Internal Security Operations Engine Error</h4>
+    <a href="{{ url_for('main.dashboard') }}" class="btn btn-cyber-primary">
+        <i class="fas fa-house me-1"></i> Return to Dashboard
+    </a>
+</div>
+{% endblock %}

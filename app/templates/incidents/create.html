@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}Create Incident - SOC Dashboard{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-7">
+        <div class="soc-card p-4">
+            <div class="d-flex align-items-center gap-3 mb-4">
+                <i class="fas fa-shield-virus text-cyan display-5"></i>
+                <div>
+                    <h3 class="fw-bold text-light mb-0">Create Security Incident</h3>
+                    <p class="text-muted small mb-0">Open an investigation case and assign to SOC analyst</p>
+                </div>
+            </div>
+
+            {% if log %}
+            <div class="alert alert-dark border-info mb-4">
+                <p class="text-info small fw-bold mb-1"><i class="fas fa-link me-1"></i> Linked Telemetry Log #{{ log.id }}:</p>
+                <div class="font-monospace extra-small text-light">
+                    <strong>IP:</strong> {{ log.source_ip }} | <strong>Attack:</strong> {{ log.attack_type }} | <strong>Severity:</strong> {{ log.severity }}<br/>
+                    <strong>Payload:</strong> {{ log.event }}
+                </div>
+            </div>
+            {% endif %}
+
+            <form action="{{ url_for('incidents.create') }}" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                {% if log %}
+                <input type="hidden" name="log_id" value="{{ log.id }}">
+                {% endif %}
+
+                <div class="mb-3">
+                    <label class="form-label text-muted small fw-semibold">Incident Title</label>
+                    <input type="text" name="title" class="form-control" placeholder="e.g. CRITICAL: SQL Injection Exfiltration Attempt from IP 185.220.101.5" value="{% if log %}{{ log.severity|upper }}: {{ log.attack_type }} from IP {{ log.source_ip }}{% endif %}" required>
+                </div>
+
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label text-muted small fw-semibold">Triage Priority</label>
+                        <select name="priority" class="form-select bg-dark text-light border-secondary">
+                            <option value="Critical" {% if log and log.severity == 'Critical' %}selected{% endif %}>Critical</option>
+                            <option value="High" {% if log and log.severity == 'High' %}selected{% endif %}>High</option>
+                            <option value="Medium" {% if log and log.severity == 'Medium' or not log %}selected{% endif %}>Medium</option>
+                            <option value="Low" {% if log and log.severity == 'Low' %}selected{% endif %}>Low</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label text-muted small fw-semibold">Assigned Analyst</label>
+                        <select name="assigned_to_id" class="form-select bg-dark text-light border-secondary">
+                            {% for a in analysts %}
+                            <option value="{{ a.id }}" {% if a.id == current_user.id %}selected{% endif %}>{{ a.username }} ({{ a.role|upper }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label text-muted small fw-semibold">Incident Description & Investigation Context</label>
+                    <textarea name="description" class="form-control bg-dark text-light border-secondary" rows="5" placeholder="Provide detailed investigation background..." required>{% if log %}Automated security incident initiated from Log #{{ log.id }}. Threat Engine flagged {{ log.attack_type }} with risk score {{ log.risk_score }}/100.{% endif %}</textarea>
+                </div>
+
+                <div class="d-flex justify-content-end gap-2">
+                    <a href="{{ url_for('incidents.index') }}" class="btn btn-outline-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-cyber-primary">
+                        <i class="fas fa-check-circle me-1"></i> Initialize Incident Case
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

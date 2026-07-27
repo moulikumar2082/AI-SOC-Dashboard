@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+{% block title %}Security Telemetry Logs - SOC Dashboard{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold text-light mb-1">
+            <i class="fas fa-list-check text-cyan me-2"></i>Security Telemetry Logs
+        </h2>
+        <p class="text-muted small mb-0">Search, filter, and inspect ingested log telemetry and threat classification</p>
+    </div>
+    <div>
+        <a href="{{ url_for('logs.upload') }}" class="btn btn-cyber-primary btn-sm">
+            <i class="fas fa-file-upload me-1"></i> Upload Log File (.txt, .log, .csv)
+        </a>
+    </div>
+</div>
+
+<!-- Filters Bar -->
+<div class="soc-card p-3 mb-4">
+    <form action="{{ url_for('logs.index') }}" method="GET" class="row g-2 align-items-center">
+        <div class="col-md-3">
+            <input type="text" name="q" class="form-control form-control-sm" placeholder="Search event payload, IP..." value="{{ search_query }}">
+        </div>
+        <div class="col-md-2">
+            <select name="severity" class="form-select form-select-sm">
+                <option value="">-- All Severities --</option>
+                {% for sev in severities %}
+                <option value="{{ sev }}" {% if current_severity == sev %}selected{% endif %}>{{ sev }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-3">
+            <select name="attack_type" class="form-select form-select-sm">
+                <option value="">-- All Attack Types --</option>
+                {% for att in attack_types %}
+                <option value="{{ att }}" {% if current_attack == att %}selected{% endif %}>{{ att }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2">
+            <input type="text" name="ip" class="form-control form-control-sm font-monospace" placeholder="IP Address" value="{{ current_ip }}">
+        </div>
+        <div class="col-md-2 d-flex gap-2">
+            <button type="submit" class="btn btn-sm btn-cyber-primary w-100"><i class="fas fa-filter me-1"></i> Filter</button>
+            <a href="{{ url_for('logs.index') }}" class="btn btn-sm btn-outline-secondary"><i class="fas fa-rotate-left"></i></a>
+        </div>
+    </form>
+</div>
+
+<!-- Logs Data Table -->
+<div class="soc-card">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-cyber align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Timestamp (UTC)</th>
+                        <th>Source IP</th>
+                        <th>Attack Type</th>
+                        <th>Severity</th>
+                        <th>Risk Score</th>
+                        <th>Event Payload</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for log in logs %}
+                    <tr>
+                        <td class="font-monospace text-muted">#{{ log.id }}</td>
+                        <td class="font-monospace small">{{ log.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                        <td class="font-monospace fw-bold text-info">{{ log.source_ip }}</td>
+                        <td><span class="badge bg-dark border border-secondary text-light">{{ log.attack_type }}</span></td>
+                        <td>
+                            <span class="badge badge-cyber {% if log.severity == 'Critical' %}badge-critical{% elif log.severity == 'High' %}badge-high{% elif log.severity == 'Medium' %}badge-medium{% elif log.severity == 'Low' %}badge-low{% else %}badge-info{% endif %}">
+                                {{ log.severity }}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="fw-bold font-monospace {% if log.risk_score > 80 %}text-danger{% elif log.risk_score > 50 %}text-warning{% else %}text-success{% endif %}">
+                                    {{ log.risk_score }}
+                                </span>
+                                <div class="risk-meter flex-grow-1" style="width: 40px;">
+                                    <div class="risk-fill {% if log.risk_score > 80 %}bg-danger{% elif log.risk_score > 50 %}bg-warning{% else %}bg-success{% endif %}" style="width: {{ log.risk_score }}%;"></div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="font-monospace small text-truncate" style="max-width: 280px;" title="{{ log.event }}">
+                            {{ log.event }}
+                        </td>
+                        <td class="text-end">
+                            <div class="btn-group btn-group-sm">
+                                <button class="btn btn-sm btn-cyber-outline" title="AI Threat Analysis" onclick="triggerAIAnalysis({{ log.id }})">
+                                    <i class="fas fa-brain"></i>
+                                </button>
+                                <a href="{{ url_for('logs.detail', log_id=log.id) }}" class="btn btn-sm btn-outline-info" title="View Detail">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="{{ url_for('incidents.create', log_id=log.id) }}" class="btn btn-sm btn-outline-warning" title="Create Incident">
+                                    <i class="fas fa-shield-virus"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="8" class="text-center py-4 text-muted">
+                            <i class="fas fa-folder-open fs-3 d-block mb-2"></i>
+                            No security logs match the current search filters.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        {% if pagination.pages > 1 %}
+        <div class="p-3 d-flex justify-content-between align-items-center border-top border-secondary">
+            <span class="text-muted small">Showing page {{ pagination.page }} of {{ pagination.pages }}</span>
+            <ul class="pagination pagination-sm mb-0">
+                {% if pagination.has_prev %}
+                <li class="page-item"><a class="page-link bg-dark text-light border-secondary" href="{{ url_for('logs.index', page=pagination.prev_num, q=search_query, severity=current_severity, attack_type=current_attack, ip=current_ip) }}">Previous</a></li>
+                {% endif %}
+                
+                {% for p in pagination.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+                    {% if p %}
+                        <li class="page-item {% if p == pagination.page %}active{% endif %}">
+                            <a class="page-link {% if p == pagination.page %}bg-info border-info text-dark{% else %}bg-dark text-light border-secondary{% endif %}" href="{{ url_for('logs.index', page=p, q=search_query, severity=current_severity, attack_type=current_attack, ip=current_ip) }}">{{ p }}</a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if pagination.has_next %}
+                <li class="page-item"><a class="page-link bg-dark text-light border-secondary" href="{{ url_for('logs.index', page=pagination.next_num, q=search_query, severity=current_severity, attack_type=current_attack, ip=current_ip) }}">Next</a></li>
+                {% endif %}
+            </ul>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

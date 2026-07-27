@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Upload Log File - SOC Dashboard{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="soc-card p-4">
+            <div class="text-center mb-4">
+                <i class="fas fa-cloud-arrow-up text-cyan display-3 mb-2"></i>
+                <h3 class="fw-bold text-light">Security Log File Ingestion</h3>
+                <p class="text-muted small">Upload system syslog, web access logs, or CSV data for automated threat detection parsing</p>
+            </div>
+
+            <form action="{{ url_for('logs.upload') }}" method="POST" enctype="multipart/form-data">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                <div class="mb-4">
+                    <label class="form-label text-muted small fw-semibold">Select Log File (.txt, .log, .csv)</label>
+                    <input class="form-control form-control-lg bg-dark text-light border-secondary" type="file" name="file" accept=".txt,.log,.csv" required>
+                    <div class="form-text text-muted">Supported formats: Syslog plain text, Nginx/Apache log files, or CSV. Max file size: 16 MB.</div>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-cyber-primary py-2.5">
+                        <i class="fas fa-bolt me-2"></i> Ingest & Execute Threat Detection Rules
+                    </button>
+                    <a href="{{ url_for('logs.index') }}" class="btn btn-outline-secondary">Cancel</a>
+                </div>
+            </form>
+
+            <div class="mt-4 p-3 bg-dark border border-secondary rounded">
+                <h6 class="text-cyan fw-bold mb-2"><i class="fas fa-microchip me-2"></i> Threat Engine Ingestion Features:</h6>
+                <ul class="text-muted small mb-0 ps-3">
+                    <li>Regex signature matching for SQL Injection, XSS, and Shell Command execution.</li>
+                    <li>Automated Brute Force & Password Spraying anomaly detection.</li>
+                    <li>Port Scanning & Reconnaissance pattern flagger.</li>
+                    <li>Automatic Risk Score evaluation (0 to 100) and severity classification.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

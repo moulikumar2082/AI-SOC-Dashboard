@@ -1,0 +1,226 @@
+{% extends "base.html" %}
+{% block title %}SOC Dashboard - AI-Powered Security Operations{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold text-light mb-1">
+            <i class="fas fa-tower-observation text-cyan me-2"></i>SOC Command Operations
+        </h2>
+        <p class="text-muted small mb-0">Real-time threat monitoring, automated detection engine & AI threat intelligence</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="{{ url_for('logs.upload') }}" class="btn btn-sm btn-cyber-primary">
+            <i class="fas fa-upload me-1"></i> Upload Log
+        </a>
+        <a href="{{ url_for('reports.index') }}" class="btn btn-sm btn-cyber-outline">
+            <i class="fas fa-file-pdf me-1"></i> Generate PDF
+        </a>
+    </div>
+</div>
+
+<!-- KPI Cards Grid -->
+<div class="row g-3 mb-4">
+    <div class="col-6 col-md-4 col-xl-2">
+        <div class="soc-card kpi-card">
+            <div class="kpi-icon kpi-total">
+                <i class="fas fa-server"></i>
+            </div>
+            <div>
+                <div class="kpi-val">{{ total_logs }}</div>
+                <div class="kpi-label">Total Logs</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-4 col-xl-2">
+        <div class="soc-card kpi-card">
+            <div class="kpi-icon kpi-critical">
+                <i class="fas fa-skull-crossbones"></i>
+            </div>
+            <div>
+                <div class="kpi-val text-danger">{{ critical_alerts }}</div>
+                <div class="kpi-label">Critical Alerts</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-4 col-xl-2">
+        <div class="soc-card kpi-card">
+            <div class="kpi-icon kpi-high">
+                <i class="fas fa-fire"></i>
+            </div>
+            <div>
+                <div class="kpi-val text-warning">{{ high_alerts }}</div>
+                <div class="kpi-label">High Alerts</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-4 col-xl-2">
+        <div class="soc-card kpi-card">
+            <div class="kpi-icon kpi-medium">
+                <i class="fas fa-triangle-exclamation"></i>
+            </div>
+            <div>
+                <div class="kpi-val text-purple">{{ medium_alerts }}</div>
+                <div class="kpi-label">Medium Alerts</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-4 col-xl-2">
+        <div class="soc-card kpi-card">
+            <div class="kpi-icon kpi-low">
+                <i class="fas fa-shield"></i>
+            </div>
+            <div>
+                <div class="kpi-val text-success">{{ low_alerts }}</div>
+                <div class="kpi-label">Low Alerts</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-4 col-xl-2">
+        <div class="soc-card kpi-card">
+            <div class="kpi-icon kpi-incident">
+                <i class="fas fa-bolt"></i>
+            </div>
+            <div>
+                <div class="kpi-val text-cyan">{{ active_incidents }}</div>
+                <div class="kpi-label">Active Incidents</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts Grid -->
+<div class="row g-3 mb-4">
+    <!-- Severity Distribution -->
+    <div class="col-md-6 col-xl-3">
+        <div class="soc-card h-100">
+            <div class="card-header">
+                <span><i class="fas fa-pie-chart text-danger me-2"></i>Severity Distribution</span>
+            </div>
+            <div class="card-body d-flex align-items-center justify-content-center position-relative" style="height: 250px;">
+                <canvas id="severityChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Attack Types Bar -->
+    <div class="col-md-6 col-xl-3">
+        <div class="soc-card h-100">
+            <div class="card-header">
+                <span><i class="fas fa-bug text-cyan me-2"></i>Attack Types</span>
+            </div>
+            <div class="card-body position-relative" style="height: 250px;">
+                <canvas id="attackChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Daily Volume Line -->
+    <div class="col-md-6 col-xl-3">
+        <div class="soc-card h-100">
+            <div class="card-header">
+                <span><i class="fas fa-chart-line text-info me-2"></i>Daily Alert Volume</span>
+            </div>
+            <div class="card-body position-relative" style="height: 250px;">
+                <canvas id="dailyChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Source IPs -->
+    <div class="col-md-6 col-xl-3">
+        <div class="soc-card h-100">
+            <div class="card-header">
+                <span><i class="fas fa-network-wired text-warning me-2"></i>Top Source IPs</span>
+            </div>
+            <div class="card-body position-relative" style="height: 250px;">
+                <canvas id="topIpChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Critical/High Feeds & Active Incidents -->
+<div class="row g-3">
+    <!-- Critical Telemetry Logs Feed -->
+    <div class="col-lg-7">
+        <div class="soc-card h-100">
+            <div class="card-header">
+                <span class="fw-bold"><i class="fas fa-biohazard text-danger me-2"></i>Recent Suspicious Security Alerts</span>
+                <a href="{{ url_for('logs.index') }}" class="btn btn-sm btn-outline-secondary text-cyan">View All Logs</a>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-cyber mb-0">
+                        <thead>
+                            <tr>
+                                <th>Timestamp</th>
+                                <th>Source IP</th>
+                                <th>Attack Type</th>
+                                <th>Severity</th>
+                                <th>Risk</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for log in recent_logs %}
+                            <tr>
+                                <td class="font-monospace small text-muted">{{ log.timestamp.strftime('%H:%M:%S') }}</td>
+                                <td class="font-monospace fw-bold text-light">{{ log.source_ip }}</td>
+                                <td class="small">{{ log.attack_type }}</td>
+                                <td>
+                                    <span class="badge badge-cyber {% if log.severity == 'Critical' %}badge-critical{% elif log.severity == 'High' %}badge-high{% else %}badge-medium{% endif %}">
+                                        {{ log.severity }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="fw-bold {% if log.risk_score > 80 %}text-danger{% else %}text-warning{% endif %}">{{ log.risk_score }}</span>
+                                </td>
+                                <td>
+                                    <button class="btn btn-sm btn-cyber-outline py-0 px-2" onclick="triggerAIAnalysis({{ log.id }})">
+                                        <i class="fas fa-brain me-1"></i> AI
+                                    </button>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr><td colspan="6" class="text-center text-muted py-3">No suspicious security alerts.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Active Incident Operations -->
+    <div class="col-lg-5">
+        <div class="soc-card h-100">
+            <div class="card-header">
+                <span class="fw-bold"><i class="fas fa-shield-virus text-cyan me-2"></i>Active Incident Response</span>
+                <a href="{{ url_for('incidents.create') }}" class="btn btn-sm btn-cyber-primary py-0 px-2">+ Incident</a>
+            </div>
+            <div class="card-body p-3">
+                {% for inc in recent_incidents %}
+                <div class="p-3 mb-2 bg-dark rounded border border-secondary">
+                    <div class="d-flex justify-content-between align-items-start mb-1">
+                        <h6 class="mb-0 fw-bold">
+                            <a href="{{ url_for('incidents.detail', incident_id=inc.id) }}" class="text-light text-decoration-none">
+                                INC-{{ inc.id }}: {{ inc.title }}
+                            </a>
+                        </h6>
+                        <span class="badge {{ inc.priority_badge_class }}">{{ inc.priority }}</span>
+                    </div>
+                    <p class="text-muted small mb-2 text-truncate">{{ inc.description }}</p>
+                    <div class="d-flex justify-content-between align-items-center extra-small">
+                        <span class="badge {{ inc.status_badge_class }}">{{ inc.status }}</span>
+                        <span class="text-info font-monospace"><i class="fas fa-user-ninja me-1"></i>{{ inc.assigned_analyst.username if inc.assigned_analyst else 'Unassigned' }}</span>
+                    </div>
+                </div>
+                {% else %}
+                <p class="text-muted text-center py-4">No active security incidents found.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
