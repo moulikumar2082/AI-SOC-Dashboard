@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  soc-dashboard:
+    build: .
+    container_name: ai_soc_dashboard
+    ports:
+      - "5000:5000"
+    environment:
+      - SECRET_KEY=super-secret-production-key-2026!
+      - USE_HTTPS=false
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+    volumes:
+      - soc_data:/app/instance
+      - soc_uploads:/app/uploads
+      - soc_reports:/app/reports
+    restart: unless-stopped
+
+volumes:
+  soc_data:
+  soc_uploads:
+  soc_reports:
