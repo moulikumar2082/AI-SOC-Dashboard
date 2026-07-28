@@ -12,30 +12,34 @@ def seed_database_if_empty():
     # Always sync registered users from persistent ledger first
     sync_users_from_ledger(db.session, User)
 
-    if User.query.first() is not None:
+    # Create Default Users if missing
+    if User.query.first() is None:
+        print("Creating default SOC Dashboard user accounts...")
+        mouli = User(username='moulikumar', email='chandammoulikumar@soc.internal', role='admin')
+        mouli.set_password('Mouli@123')
+
+        admin = User(username='admin', email='admin@soc.internal', role='admin')
+        admin.set_password('Admin@123')
+
+        analyst = User(username='analyst', email='analyst@soc.internal', role='analyst')
+        analyst.set_password('Analyst@123')
+
+        sec_user = User(username='user', email='user@soc.internal', role='user')
+        sec_user.set_password('User@123')
+
+        db.session.add_all([mouli, admin, analyst, sec_user])
+        db.session.commit()
+
+        for u in [mouli, admin, analyst, sec_user]:
+            save_user_to_ledger(u)
+
+    if Log.query.first() is not None:
         return
 
-    print("Seeding SOC Dashboard sample users, security logs, and incidents...")
+    print("Seeding SOC Dashboard historical security logs & incidents...")
 
-    # Create Default Users
-    mouli = User(username='moulikumar', email='chandammoulikumar@soc.internal', role='admin')
-    mouli.set_password('Mouli@123')
-
-    admin = User(username='admin', email='admin@soc.internal', role='admin')
-    admin.set_password('Admin@123')
-
-    analyst = User(username='analyst', email='analyst@soc.internal', role='analyst')
-    analyst.set_password('Analyst@123')
-
-    sec_user = User(username='user', email='user@soc.internal', role='user')
-    sec_user.set_password('User@123')
-
-    db.session.add_all([mouli, admin, analyst, sec_user])
-    db.session.commit()
-
-    # Save initial users to ledger
-    for u in [mouli, admin, analyst, sec_user]:
-        save_user_to_ledger(u)
+    admin = User.query.filter_by(username='admin').first()
+    analyst = User.query.filter_by(username='analyst').first()
 
     # Sample IP addresses and attack scenarios
     attack_scenarios = [
@@ -144,6 +148,25 @@ def seed_database_if_empty():
             'mitre': 'T1078 - Valid Accounts',
             'ua': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'
         },
+        # Low Severity Scenarios
+        {
+            'ip': '192.168.1.120',
+            'event': "GET /../../etc/passwd HTTP/1.1 - Path Traversal Probe Neutralized",
+            'severity': 'Low',
+            'attack_type': 'Directory Traversal',
+            'risk_score': 35,
+            'mitre': 'T1083 - File and Directory Discovery',
+            'ua': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'
+        },
+        {
+            'ip': '172.16.0.45',
+            'event': "HTTP GET /robots.txt - Suspicious Automated Crawler Probing System Paths",
+            'severity': 'Low',
+            'attack_type': 'Web Reconnaissance',
+            'risk_score': 25,
+            'mitre': 'T1595 - Active Scanning',
+            'ua': 'Go-http-client/1.1'
+        },
         # Benign / Info
         {
             'ip': '192.168.1.50',
@@ -177,10 +200,14 @@ def seed_database_if_empty():
     now = datetime.now(timezone.utc)
     logs_created = []
 
-    # Create ~45 logs distributed over the past 7 days
-    for i in range(45):
+    # Create 65 logs distributed from 14 days ago up to current time today
+    for i in range(65):
         scenario = random.choice(attack_scenarios)
-        days_offset = random.uniform(0, 7)
+        if i < 15:
+            days_offset = random.uniform(0.01, 0.95)  # Today's alerts
+        else:
+            days_offset = random.uniform(1.0, 14.0)   # Past 1-14 days
+
         log_time = now - timedelta(days=days_offset)
 
         log_item = Log(
@@ -197,7 +224,7 @@ def seed_database_if_empty():
             status=random.choice(['Unassigned', 'Investigating', 'Mitigated', 'Closed']) if scenario['severity'] != 'Info' else 'Closed'
         )
 
-        # Pre-populate AI analysis fallback for quick demonstration
+        # Pre-populate AI analysis fallback for instant threat intelligence display
         ai_res = AIThreatAnalyzer.fallback_offline_analysis(log_item)
         log_item.ai_analysis = ai_res
         logs_created.append(log_item)
@@ -205,7 +232,7 @@ def seed_database_if_empty():
     db.session.add_all(logs_created)
     db.session.commit()
 
-    # Create Sample Incidents
+    # Create Sample Incidents linked to top critical logs
     critical_logs = Log.query.filter(Log.severity == 'Critical').limit(3).all()
     
     incidents = [
@@ -214,7 +241,7 @@ def seed_database_if_empty():
             description="Host 193.42.33.18 initiated encrypted outbound HTTPS beaconing to suspicious external C2 IP. Immediate isolation and memory forensics required.",
             priority="Critical",
             status="In Progress",
-            assigned_to_id=analyst.id,
+            assigned_to_id=analyst.id if analyst else None,
             log_id=critical_logs[0].id if len(critical_logs) > 0 else None,
             mitigation_notes="Isolated host at core switch level. Extracted RAM image for Volatility triage."
         ),
@@ -223,7 +250,7 @@ def seed_database_if_empty():
             description="Multiple SQLi payloads (UNION SELECT and OR 1=1) observed against public endpoints from IP 185.220.101.5.",
             priority="High",
             status="Open",
-            assigned_to_id=analyst.id,
+            assigned_to_id=analyst.id if analyst else None,
             log_id=critical_logs[1].id if len(critical_logs) > 1 else None,
             mitigation_notes="WAF block rule pending review."
         ),
@@ -232,7 +259,7 @@ def seed_database_if_empty():
             description="Over 140 failed SSH attempts targeting root user from external IP 198.51.100.44.",
             priority="High",
             status="Resolved",
-            assigned_to_id=admin.id,
+            assigned_to_id=admin.id if admin else None,
             log_id=None,
             mitigation_notes="IP 198.51.100.44 permanently banned in IPTables. Disabled root password SSH login."
         ),
@@ -241,7 +268,7 @@ def seed_database_if_empty():
             description="Stealth SYN scan probed multiple database and remote desktop service ports from 162.243.140.2.",
             priority="Medium",
             status="Closed",
-            assigned_to_id=analyst.id,
+            assigned_to_id=analyst.id if analyst else None,
             log_id=None,
             mitigation_notes="Scan blocked by automatic IPS shunning rule."
         )
@@ -250,7 +277,8 @@ def seed_database_if_empty():
     for inc in incidents:
         inc.add_timeline_note('System', 'Incident automatically created from SOC detection engine alert.')
         if inc.mitigation_notes:
-            inc.add_timeline_note(inc.assigned_analyst.username if inc.assigned_analyst else 'Analyst', inc.mitigation_notes)
+            author_name = inc.assigned_analyst.username if (hasattr(inc, 'assigned_analyst') and inc.assigned_analyst) else 'Analyst'
+            inc.add_timeline_note(author_name, inc.mitigation_notes)
 
     db.session.add_all(incidents)
     db.session.commit()
