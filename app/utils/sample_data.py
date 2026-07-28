@@ -33,7 +33,7 @@ def seed_database_if_empty():
         for u in [mouli, admin, analyst, sec_user]:
             save_user_to_ledger(u)
 
-    if Log.query.first() is not None:
+    if Log.query.count() >= 20:
         return
 
     print("Seeding SOC Dashboard historical security logs & incidents...")

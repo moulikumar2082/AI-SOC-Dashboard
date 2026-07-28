@@ -4,12 +4,17 @@ from sqlalchemy import func
 from datetime import datetime, timedelta, timezone
 from app.models import db, Log, Incident
 
+from app.utils.sample_data import seed_database_if_empty
+
 main_bp = Blueprint('main', __name__)
 
 @main_bp.route('/')
 @main_bp.route('/dashboard')
 @login_required
 def dashboard():
+    if Log.query.count() < 20:
+        seed_database_if_empty()
+
     total_logs = Log.query.count()
     critical_alerts = Log.query.filter_by(severity='Critical').count()
     high_alerts = Log.query.filter_by(severity='High').count()
@@ -35,6 +40,8 @@ def dashboard():
 @main_bp.route('/api/chart-data')
 @login_required
 def chart_data():
+    if Log.query.count() < 20:
+        seed_database_if_empty()
     # 1. Severity Distribution
     severity_counts = db.session.query(
         Log.severity, func.count(Log.id)
