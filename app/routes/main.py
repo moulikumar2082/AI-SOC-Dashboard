@@ -19,6 +19,7 @@ def dashboard():
 
     recent_critical_logs = Log.query.filter(Log.severity.in_(['Critical', 'High'])).order_by(Log.timestamp.desc()).limit(10).all()
     recent_incidents = Incident.query.order_by(Incident.created_at.desc()).limit(5).all()
+    logs_history = Log.query.order_by(Log.timestamp.desc()).limit(15).all()
 
     return render_template('dashboard/index.html',
                            total_logs=total_logs,
@@ -28,7 +29,8 @@ def dashboard():
                            low_alerts=low_alerts,
                            active_incidents=active_incidents,
                            recent_logs=recent_critical_logs,
-                           recent_incidents=recent_incidents)
+                           recent_incidents=recent_incidents,
+                           logs_history=logs_history)
 
 @main_bp.route('/api/chart-data')
 @login_required

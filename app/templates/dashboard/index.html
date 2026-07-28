@@ -223,4 +223,94 @@
         </div>
     </div>
 </div>
+
+<!-- Full Security Telemetry Logs History Audit Trail -->
+<div class="row g-3 mt-1">
+    <div class="col-12">
+        <div class="soc-card">
+            <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <div class="d-flex align-items-center gap-2">
+                    <span class="fw-bold fs-6"><i class="fas fa-clock-rotate-left text-cyan me-2"></i>Security Telemetry Logs History</span>
+                    <span class="badge bg-dark border border-cyan text-cyan font-monospace">Live Audit Stream</span>
+                </div>
+                <div class="d-flex gap-2">
+                    <a href="{{ url_for('logs.index') }}" class="btn btn-sm btn-cyber-outline">
+                        <i class="fas fa-database me-1"></i> Full Logs Repository
+                    </a>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-cyber align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>Log ID</th>
+                                <th>Timestamp (UTC)</th>
+                                <th>Source IP & Destination</th>
+                                <th>Attack Type & MITRE</th>
+                                <th>Severity</th>
+                                <th>Risk Score</th>
+                                <th>Event Summary Payload</th>
+                                <th class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for log in logs_history %}
+                            <tr>
+                                <td class="font-monospace text-muted small">#{{ log.id }}</td>
+                                <td class="font-monospace small text-light">{{ log.timestamp.strftime('%Y-%m-%d %H:%M:%S') if log.timestamp else 'N/A' }}</td>
+                                <td class="font-monospace small">
+                                    <div class="text-info fw-bold">{{ log.source_ip }}</div>
+                                    <div class="text-muted extra-small"><i class="fas fa-arrow-right extra-small me-1"></i>{{ log.destination_ip or '192.168.1.1' }}</div>
+                                </td>
+                                <td>
+                                    <span class="badge bg-dark border border-secondary text-light mb-1">{{ log.attack_type }}</span>
+                                    {% if log.mitre_technique and log.mitre_technique != 'N/A' %}
+                                    <div class="extra-small font-monospace text-cyan">{{ log.mitre_technique }}</div>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <span class="badge badge-cyber {% if log.severity == 'Critical' %}badge-critical{% elif log.severity == 'High' %}badge-high{% elif log.severity == 'Medium' %}badge-medium{% elif log.severity == 'Low' %}badge-low{% else %}badge-info{% endif %}">
+                                        {{ log.severity }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2" style="width: 80px;">
+                                        <span class="fw-bold font-monospace small {% if log.risk_score > 80 %}text-danger{% elif log.risk_score > 50 %}text-warning{% else %}text-success{% endif %}">
+                                            {{ log.risk_score }}
+                                        </span>
+                                        <div class="risk-meter flex-grow-1" style="height: 6px;">
+                                            <div class="risk-fill {% if log.risk_score > 80 %}bg-danger{% elif log.risk_score > 50 %}bg-warning{% else %}bg-success{% endif %}" style="width: {{ log.risk_score }}%;"></div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="font-monospace small text-truncate" style="max-width: 240px;" title="{{ log.event }}">
+                                    {{ log.event }}
+                                </td>
+                                <td class="text-end">
+                                    <div class="btn-group btn-group-sm">
+                                        <button class="btn btn-sm btn-cyber-outline" title="AI Threat Analysis" onclick="triggerAIAnalysis({{ log.id }})">
+                                            <i class="fas fa-brain"></i>
+                                        </button>
+                                        <a href="{{ url_for('logs.detail', log_id=log.id) }}" class="btn btn-sm btn-outline-info" title="Inspect Log Detail">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a href="{{ url_for('incidents.create', log_id=log.id) }}" class="btn btn-sm btn-outline-warning" title="Create Incident">
+                                            <i class="fas fa-shield-virus"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="8" class="text-center text-muted py-4">No log telemetry history recorded yet. Use "Upload Log" to ingest telemetry.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
