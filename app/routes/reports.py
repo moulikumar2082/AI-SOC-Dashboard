@@ -33,7 +33,6 @@ def index():
 
 @reports_bp.route('/reports/generate', methods=['POST'])
 @login_required
-@analyst_required
 def generate():
     report_type = request.form.get('report_type', 'Daily Summary')
 
