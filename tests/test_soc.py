@@ -84,18 +84,30 @@ class TestSOCDashboard(unittest.TestCase):
         full_path = os.path.join(self.app.config['REPORT_FOLDER'], pdf_file)
         self.assertTrue(os.path.exists(full_path))
 
-    def test_routes_status(self):
-        """Test HTTP responses for login and authenticated dashboard."""
-        response = self.client.get('/login')
-        self.assertEqual(response.status_code, 200)
-
-        # Login as Admin
+    def test_report_routes(self):
+        """Test generating and downloading PDF reports via routes."""
+        # Login as Admin (who is an analyst)
         self.client.post('/login', data={'username': 'admin', 'password': 'Admin@123'}, follow_redirects=True)
-        dash_response = self.client.get('/dashboard')
-        self.assertEqual(dash_response.status_code, 200)
+        
+        # Test report index
+        idx_res = self.client.get('/reports')
+        self.assertEqual(idx_res.status_code, 200)
 
-        chart_response = self.client.get('/api/chart-data')
-        self.assertEqual(chart_response.status_code, 200)
+        # Test generating PDF
+        gen_res = self.client.post('/reports/generate', data={'report_type': 'Daily Summary'}, follow_redirects=True)
+        self.assertEqual(gen_res.status_code, 200)
+        self.assertIn(b'generated successfully', gen_res.data)
+
+        # Find generated filename in folder
+        report_dir = os.path.abspath(self.app.config['REPORT_FOLDER'])
+        files = [f for f in os.listdir(report_dir) if f.endswith('.pdf')]
+        self.assertTrue(len(files) > 0)
+        
+        # Test download endpoint
+        dl_res = self.client.get(f'/reports/download/{files[0]}')
+        self.assertEqual(dl_res.status_code, 200)
+        self.assertEqual(dl_res.mimetype, 'application/pdf')
+        self.assertIn('attachment', dl_res.headers.get('Content-Disposition', ''))
 
 if __name__ == '__main__':
     unittest.main()

@@ -16,7 +16,7 @@ class SOCReportGenerator:
         """
         Creates a PDF file and returns the file path.
         """
-        report_dir = current_app.config['REPORT_FOLDER']
+        report_dir = os.path.abspath(current_app.config['REPORT_FOLDER'])
         os.makedirs(report_dir, exist_ok=True)
         
         timestamp_str = datetime.now().strftime('%Y%m%d_%H%M%S')
@@ -120,16 +120,19 @@ class SOCReportGenerator:
 
             import html
             for log in logs_data[:25]:
-                severity_color = '#dc2626' if log.severity == 'Critical' else '#f97316' if log.severity == 'High' else '#eab308' if log.severity == 'Medium' else '#3b82f6'
-                sev_p = Paragraph(f"<font color='{severity_color}'><b>{html.escape(str(log.severity))}</b></font>", body_style)
+                severity_str = str(log.severity) if log.severity else 'Low'
+                severity_color = '#dc2626' if severity_str == 'Critical' else '#f97316' if severity_str == 'High' else '#eab308' if severity_str == 'Medium' else '#3b82f6'
+                sev_p = Paragraph(f"<font color='{severity_color}'><b>{html.escape(severity_str)}</b></font>", body_style)
                 
-                clean_event = html.escape(str(log.event))
+                clean_event = html.escape(str(log.event or ''))
+                ts_str = log.timestamp.strftime('%m-%d %H:%M') if (hasattr(log, 'timestamp') and log.timestamp) else 'N/A'
+                
                 table_data.append([
-                    Paragraph(html.escape(log.timestamp.strftime('%m-%d %H:%M')), body_style),
-                    Paragraph(html.escape(str(log.source_ip)), body_style),
+                    Paragraph(html.escape(ts_str), body_style),
+                    Paragraph(html.escape(str(log.source_ip or '')), body_style),
                     sev_p,
-                    Paragraph(html.escape(str(log.attack_type)), body_style),
-                    Paragraph(html.escape(str(log.risk_score)), body_style),
+                    Paragraph(html.escape(str(log.attack_type or '')), body_style),
+                    Paragraph(html.escape(str(log.risk_score if log.risk_score is not None else 0)), body_style),
                     Paragraph(clean_event[:60] + ('...' if len(clean_event) > 60 else ''), body_style)
                 ])
 
@@ -160,14 +163,15 @@ class SOCReportGenerator:
 
             import html
             for inc in incidents_data[:20]:
-                analyst_name = inc.assigned_analyst.username if inc.assigned_analyst else 'Unassigned'
+                analyst_name = inc.assigned_analyst.username if (hasattr(inc, 'assigned_analyst') and inc.assigned_analyst) else 'Unassigned'
+                created_str = inc.created_at.strftime('%Y-%m-%d %H:%M') if (hasattr(inc, 'created_at') and inc.created_at) else 'N/A'
                 table_data.append([
                     Paragraph(html.escape(f"INC-{inc.id}"), body_style),
-                    Paragraph(html.escape(str(inc.title)), body_style),
-                    Paragraph(html.escape(str(inc.priority)), body_style),
-                    Paragraph(html.escape(str(inc.status)), body_style),
+                    Paragraph(html.escape(str(inc.title or '')), body_style),
+                    Paragraph(html.escape(str(inc.priority or '')), body_style),
+                    Paragraph(html.escape(str(inc.status or '')), body_style),
                     Paragraph(html.escape(str(analyst_name)), body_style),
-                    Paragraph(html.escape(inc.created_at.strftime('%Y-%m-%d %H:%M')), body_style)
+                    Paragraph(html.escape(created_str), body_style)
                 ])
 
             t = Table(table_data, colWidths=[40, 180, 60, 70, 95, 95])

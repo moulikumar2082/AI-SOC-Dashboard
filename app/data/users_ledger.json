@@ -1,0 +1,34 @@
+[
+  {
+    "username": "moulikumar",
+    "email": "chandammoulikumar@soc.internal",
+    "password_hash": "scrypt:32768:8:1$NiwwIb2bfs37eHvv$8a2695ea672240ec797c5a2687ade8132ab3ed0ee166757a039bfa6d97ea726adbf1ebdab9bf5e897cc11aa7f59ee0b01e7da63b3e856e6a382ab67631910e16",
+    "role": "admin",
+    "is_active": true,
+    "created_at": "2026-07-27 19:36:01 UTC"
+  },
+  {
+    "username": "admin",
+    "email": "admin@soc.internal",
+    "password_hash": "scrypt:32768:8:1$eLRkEJv3UaphNl7H$b3e9f41705df21cdac2a14f9c7c7bacb833f8b0a4fb3790ff3f08973ce5bb08fa160990b4e0a6e68825660d405fcdda91e68a475cb6ba5c69f3527aedb24e2f8",
+    "role": "admin",
+    "is_active": true,
+    "created_at": "2026-07-27 19:36:01 UTC"
+  },
+  {
+    "username": "analyst",
+    "email": "analyst@soc.internal",
+    "password_hash": "scrypt:32768:8:1$0Rmy9U8vGttBLOHF$a203abfe05974ee391bd925579c81b91b52a4f384fc3fd7495c77b3b3556b12bdb6cffe3b6fbb8aa13fb9cbdcacdd916b18f59bc7560f99f8146268524a70950",
+    "role": "analyst",
+    "is_active": true,
+    "created_at": "2026-07-27 19:36:01 UTC"
+  },
+  {
+    "username": "user",
+    "email": "user@soc.internal",
+    "password_hash": "scrypt:32768:8:1$Rlpo5AgcZJhNFv3U$95fe10b20d32980f0b6902c103a2ca37cd15ac44c192911b8b65eb47aa82cbffd96738551b105e7337931e59d3cf911da8a58239ed354207729c5db106c344cd",
+    "role": "user",
+    "is_active": true,
+    "created_at": "2026-07-27 19:36:01 UTC"
+  }
+]
