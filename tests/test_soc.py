@@ -93,10 +93,11 @@ class TestSOCDashboard(unittest.TestCase):
         idx_res = self.client.get('/reports')
         self.assertEqual(idx_res.status_code, 200)
 
-        # Test generating PDF
-        gen_res = self.client.post('/reports/generate', data={'report_type': 'Daily Summary'}, follow_redirects=True)
+        # Test generating PDF (direct streaming response)
+        gen_res = self.client.post('/reports/generate', data={'report_type': 'Daily Summary'})
         self.assertEqual(gen_res.status_code, 200)
-        self.assertIn(b'generated successfully', gen_res.data)
+        self.assertEqual(gen_res.mimetype, 'application/pdf')
+        self.assertTrue(gen_res.data.startswith(b'%PDF'))
 
         # Find generated filename in folder
         report_dir = os.path.abspath(self.app.config['REPORT_FOLDER'])

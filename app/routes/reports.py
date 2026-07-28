@@ -1,5 +1,5 @@
 import os
-from flask import Blueprint, render_template, request, redirect, url_for, flash, send_from_directory, current_app
+from flask import Blueprint, render_template, request, redirect, url_for, flash, send_from_directory, send_file, current_app
 from flask_login import login_required
 from werkzeug.utils import secure_filename
 from app.models import Log, Incident
@@ -56,12 +56,18 @@ def generate():
             incidents_data=incidents,
             summary_stats=summary_stats
         )
-        flash(f"PDF report '{pdf_filename}' generated successfully!", 'success')
-        return redirect(url_for('reports.index', download=pdf_filename))
+        report_dir = os.path.abspath(current_app.config['REPORT_FOLDER'])
+        file_path = os.path.join(report_dir, pdf_filename)
+
+        return send_file(
+            file_path,
+            as_attachment=True,
+            download_name=pdf_filename,
+            mimetype='application/pdf'
+        )
     except Exception as e:
         flash(f"Failed to generate PDF report: {str(e)}", 'danger')
-
-    return redirect(url_for('reports.index'))
+        return redirect(url_for('reports.index'))
 
 @reports_bp.route('/reports/download/<filename>')
 @login_required
@@ -71,8 +77,37 @@ def download(filename):
     file_path = os.path.join(report_dir, safe_name)
 
     if not os.path.exists(file_path):
-        flash(f"Requested PDF report '{safe_name}' was not found.", 'danger')
-        return redirect(url_for('reports.index'))
+        report_type = 'Daily Summary'
+        if 'Weekly_Summary' in safe_name:
+            report_type = 'Weekly Summary'
+        elif 'Incident_Report' in safe_name:
+            report_type = 'Incident Report'
+        elif 'Attack_Statistics' in safe_name:
+            report_type = 'Attack Statistics'
+
+        logs = Log.query.order_by(Log.timestamp.desc()).all()
+        incidents = Incident.query.order_by(Incident.created_at.desc()).all()
+
+        summary_stats = {
+            'total_logs': len(logs),
+            'critical_count': sum(1 for l in logs if l.severity == 'Critical'),
+            'high_count': sum(1 for l in logs if l.severity == 'High'),
+            'medium_count': sum(1 for l in logs if l.severity == 'Medium'),
+            'low_count': sum(1 for l in logs if l.severity == 'Low'),
+            'active_incidents': sum(1 for i in incidents if i.status in ['Open', 'In Progress'])
+        }
+
+        try:
+            SOCReportGenerator.generate_pdf_report(
+                report_type=report_type,
+                logs_data=logs,
+                incidents_data=incidents,
+                summary_stats=summary_stats,
+                filename=safe_name
+            )
+        except Exception:
+            flash(f"Requested PDF report '{safe_name}' could not be generated.", 'danger')
+            return redirect(url_for('reports.index'))
 
     return send_from_directory(
         report_dir,
@@ -80,4 +115,5 @@ def download(filename):
         as_attachment=True,
         mimetype='application/pdf'
     )
+
 

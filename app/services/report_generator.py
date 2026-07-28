@@ -12,15 +12,17 @@ class SOCReportGenerator:
     """
 
     @classmethod
-    def generate_pdf_report(cls, report_type, logs_data=None, incidents_data=None, summary_stats=None):
+    def generate_pdf_report(cls, report_type, logs_data=None, incidents_data=None, summary_stats=None, filename=None):
         """
         Creates a PDF file and returns the file path.
         """
         report_dir = os.path.abspath(current_app.config['REPORT_FOLDER'])
         os.makedirs(report_dir, exist_ok=True)
         
-        timestamp_str = datetime.now().strftime('%Y%m%d_%H%M%S')
-        filename = f"SOC_{report_type.replace(' ', '_')}_{timestamp_str}.pdf"
+        if not filename:
+            timestamp_str = datetime.now().strftime('%Y%m%d_%H%M%S')
+            filename = f"SOC_{report_type.replace(' ', '_')}_{timestamp_str}.pdf"
+
         file_path = os.path.join(report_dir, filename)
 
         doc = SimpleDocTemplate(
